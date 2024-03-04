@@ -123,7 +123,6 @@ void MazeGenerator::randomWalk(Maze *maze)
 
     while (included.find(currentNode) == included.end())
     {
-        // path.push_back({currentNode, directionTaken[currentNode]});
         included.insert(currentNode);
 
         neighbor = getNeighbor(currentNode, directionTaken[currentNode]);
@@ -131,8 +130,6 @@ void MazeGenerator::randomWalk(Maze *maze)
 
         currentNode = neighbor;
     }
-
-    // return path;
 }
 
 void MazeGenerator::generate(Maze *maze)
