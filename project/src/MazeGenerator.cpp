@@ -132,8 +132,11 @@ void MazeGenerator::randomWalk(Maze *maze)
     }
 }
 
-void MazeGenerator::generate(Maze *maze)
+void MazeGenerator::generate(Maze *maze, bool multiplePaths)
 {
+    // Generate maze using Wilson's algorithm. The resulting maze will only
+    // have one path from start to end.
+
     included.erase(included.begin(), included.end());
 
     included.insert({0, 0});
@@ -141,5 +144,29 @@ void MazeGenerator::generate(Maze *maze)
     while (included.size() < maze->getRows() * maze->getColumns())
     {
         randomWalk(maze);
+    }
+
+    // Add new edges to the maze to create cycles that will introduce new
+    // paths to solve the maze.
+
+    if (multiplePaths)
+    {
+        int additionalPaths = (maze->getRows() * maze->getColumns()) * ((double)(rand() % 5 + 1) / 100);
+
+        for (int i = 0; i < additionalPaths;)
+        {
+            pair<int, int> node;
+
+            node.first = rand() % maze->getRows();
+            node.second = rand() % maze->getColumns();
+
+            vector<pair<int, int>> neighbors = getAllNeighbors(maze, node);
+            pair<int, int> neighbor = neighbors[rand() % neighbors.size()];
+
+            if (maze->addEdge(node, neighbor))
+            {
+                i++;
+            }
+        }
     }
 }

@@ -22,7 +22,7 @@ private:
 public:
     MazeGenerator(long);
 
-    void generate(Maze *);
+    void generate(Maze *, bool);
 };
 
 #endif

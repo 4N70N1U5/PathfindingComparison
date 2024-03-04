@@ -7,37 +7,61 @@
 
 using namespace std;
 
+bool validateInput(int argc, char *argv[])
+{
+    if (argc != 4 && argc != 5)
+    {
+        cout << "Incorrect argument list!\n";
+        return false;
+    }
+
+    if (stoi(argv[1]) < 10 || stoi(argv[2]) < 10)
+    {
+        cout << "Minimum maze size is 10x10!\n";
+        return false;
+    }
+
+    if (stoi(argv[3]) != 0 && stoi(argv[3]) != 1)
+    {
+        cout << "The value for multiple paths must be either 0 (do not create multiple paths) or 1 (create multiple paths)!\n";
+        return false;
+    }
+
+    return true;
+}
+
 int main(int argc, char *argv[])
 {
+    if (!validateInput(argc, argv))
+    {
+        return 0;
+    }
+
     Maze *maze;
 
     switch (argc)
     {
-    case 3:
+    case 4:
     {
         maze = new Maze(stoi(argv[1]), stoi(argv[2]));
         MazeGenerator generator(time(0));
 
-        generator.generate(maze);
+        generator.generate(maze, stoi(argv[3]));
 
         cout << "Will generate maze with " << argv[1] << " rows and " << argv[2] << " columns with random seed\n";
         break;
     }
 
-    case 4:
+    case 5:
     {
         maze = new Maze(stoi(argv[1]), stoi(argv[2]));
-        MazeGenerator generator(stol(argv[3]));
+        MazeGenerator generator(stol(argv[4]));
 
-        generator.generate(maze);
+        generator.generate(maze, stoi(argv[3]));
 
-        cout << "Will generate maze with " << argv[1] << " rows and " << argv[2] << " columns with seed " << argv[3] << "\n";
+        cout << "Will generate maze with " << argv[1] << " rows and " << argv[2] << " columns with seed " << argv[4] << "\n";
         break;
     }
-
-    default:
-        cout << "Incorrect argument list!\n";
-        return 0;
     }
 
     maze->print();

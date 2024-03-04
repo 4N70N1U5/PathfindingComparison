@@ -19,10 +19,17 @@ int Maze::getColumns()
     return columns;
 }
 
-void Maze::addEdge(pair<int, int> node1, pair<int, int> node2)
+bool Maze::addEdge(pair<int, int> node1, pair<int, int> node2)
 {
+    if (find(adjacency[node1].begin(), adjacency[node1].end(), node2) != adjacency[node1].end())
+    {
+        return false;
+    }
+
     adjacency[node1].push_back(node2);
     adjacency[node2].push_back(node1);
+
+    return true;
 }
 
 void Maze::print()

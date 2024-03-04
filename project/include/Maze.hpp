@@ -3,7 +3,6 @@
 
 #include <vector>
 #include <unordered_map>
-#include <unordered_set>
 #include <boost/functional/hash.hpp>
 
 using namespace std;
@@ -20,7 +19,7 @@ public:
     int getRows();
     int getColumns();
 
-    void addEdge(pair<int, int>, pair<int, int>);
+    bool addEdge(pair<int, int>, pair<int, int>);
 
     void print();
 };
