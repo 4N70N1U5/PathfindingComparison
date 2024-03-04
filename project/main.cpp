@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string>
 #include <ctime>
+#include <SFML/Graphics.hpp>
 
 using namespace std;
 
@@ -64,7 +65,27 @@ int main(int argc, char *argv[])
     }
     }
 
-    maze->print();
+    // maze->print();
+
+    sf::RenderWindow window(sf::VideoMode(stoi(argv[1]) * 10, stoi(argv[2]) * 10), "Maze", sf::Style::Titlebar | sf::Style::Close);
+
+    bool exitProgram = false;
+
+    while (!exitProgram && window.isOpen())
+    {
+        sf::Event event;
+
+        while (window.pollEvent(event))
+        {
+            // "close requested" event: we close the window
+            if (event.type == sf::Event::Closed)
+            {
+                window.close();
+            }
+        }
+
+        maze->draw(&window);
+    }
 
     return 0;
 }

@@ -13,7 +13,10 @@
 				"${workspaceFolder}/project/src/MazeGenerator.cpp",
 				"-std=c++17",
 				"-o",
-				"${workspaceFolder}/bin/a.out"
+				"${workspaceFolder}/bin/a.out",
+				"-lsfml-graphics",
+				"-lsfml-window",
+				"-lsfml-system"
 			],
 			"options": {
 				"cwd": "${fileDirname}"
