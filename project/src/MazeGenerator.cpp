@@ -126,7 +126,7 @@ void MazeGenerator::randomWalk(Maze *maze)
         included.insert(currentNode);
 
         neighbor = getNeighbor(currentNode, directionTaken[currentNode]);
-        maze->addEdge(currentNode, neighbor);
+        maze->addEdge(currentNode, neighbor, rand() % 100 + 1);
 
         currentNode = neighbor;
     }
@@ -163,7 +163,7 @@ void MazeGenerator::generate(Maze *maze, bool multiplePaths)
             vector<pair<int, int>> neighbors = getAllNeighbors(maze, node);
             pair<int, int> neighbor = neighbors[rand() % neighbors.size()];
 
-            if (maze->addEdge(node, neighbor))
+            if (maze->addEdge(node, neighbor, rand() % 100 + 1))
             {
                 i++;
             }

@@ -42,6 +42,19 @@ vector<pair<pair<int, int>, int>> Maze::getAllNeighbors(pair<int, int> node)
     return neighbors;
 }
 
+bool Maze::areNeighbors(pair<int, int> node1, pair<int, int> node2)
+{
+    for (int i = 0; i < adjacency[node1].size(); i++)
+    {
+        if (adjacency[node1][i].first == node2)
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 void Maze::drawWall(sf::RenderWindow *window, pair<int, int> wallLocation, int wallPosition)
 {
     if (wallPosition == NORTH || wallPosition == SOUTH)
@@ -88,15 +101,15 @@ int Maze::getColumns()
     return columns;
 }
 
-bool Maze::addEdge(pair<int, int> node1, pair<int, int> node2)
+bool Maze::addEdge(pair<int, int> node1, pair<int, int> node2, int weight)
 {
-    if (find(adjacency[node1].begin(), adjacency[node1].end(), node2) != adjacency[node1].end())
+    if (areNeighbors(node1, node2))
     {
         return false;
     }
 
-    adjacency[node1].push_back(node2);
-    adjacency[node2].push_back(node1);
+    adjacency[node1].push_back({node2, weight});
+    adjacency[node2].push_back({node1, weight});
 
     return true;
 }
@@ -109,12 +122,12 @@ void Maze::print()
         {
             cout << "Node (" << i << ", " << j << "): ";
 
-            for (pair<int, int> neighbor : adjacency[{i, j}])
+            for (auto neighbor : adjacency[{i, j}])
             {
-                cout << "(" << neighbor.first << ", " << neighbor.second << ") ";
+                cout << "{(" << neighbor.first.first << ", " << neighbor.first.second << "), " << neighbor.second << "} ";
             }
 
-            cout << endl;
+            cout << "\n";
         }
     }
 }
@@ -129,7 +142,7 @@ void Maze::draw(sf::RenderWindow *window)
         {
             for (auto neighbor : getAllNeighbors({i, j}))
             {
-                if (find(adjacency[{i, j}].begin(), adjacency[{i, j}].end(), neighbor.first) == adjacency[{i, j}].end())
+                if (!areNeighbors({i, j}, neighbor.first))
                 {
                     drawWall(window, {i, j}, neighbor.second);
                 }

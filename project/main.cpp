@@ -65,7 +65,7 @@ int main(int argc, char *argv[])
     }
     }
 
-    // maze->print();
+    maze->print();
 
     sf::RenderWindow window(sf::VideoMode(stoi(argv[1]) * 10, stoi(argv[2]) * 10), "Maze", sf::Style::Titlebar | sf::Style::Close);
 
