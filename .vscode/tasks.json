@@ -11,6 +11,7 @@
 				"${workspaceFolder}/project/main.cpp",
 				"${workspaceFolder}/project/src/Maze.cpp",
 				"${workspaceFolder}/project/src/MazeGenerator.cpp",
+				"${workspaceFolder}/project/src/MazeSolver.cpp",
 				"-std=c++17",
 				"-o",
 				"${workspaceFolder}/bin/a.out",

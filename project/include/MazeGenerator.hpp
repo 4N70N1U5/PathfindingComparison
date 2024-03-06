@@ -11,6 +11,7 @@ using namespace std;
 class MazeGenerator
 {
 private:
+    long seed;
     unordered_set<pair<int, int>, boost::hash<pair<int, int>>> included;
 
     int getDirectionBetween(pair<int, int>, pair<int, int>);

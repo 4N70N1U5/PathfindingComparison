@@ -26,6 +26,9 @@ public:
 
     bool addEdge(pair<int, int>, pair<int, int>, int);
 
+    int getEdgeWeight(pair<int, int>, pair<int, int>);
+    vector<pair<pair<int, int>, int>> getAdjacencyList(pair<int, int>);
+
     void print();
     void draw(sf::RenderWindow *);
 };

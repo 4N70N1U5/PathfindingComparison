@@ -1,8 +1,11 @@
 #include "include/Maze.hpp"
 #include "include/MazeGenerator.hpp"
+#include "include/MazeSolver.hpp"
 
 #include <iostream>
 #include <string>
+#include <thread>
+#include <chrono>
 #include <ctime>
 #include <SFML/Graphics.hpp>
 
@@ -45,46 +48,56 @@ int main(int argc, char *argv[])
     case 4:
     {
         maze = new Maze(stoi(argv[1]), stoi(argv[2]));
-        MazeGenerator generator(time(0));
 
+        MazeGenerator generator(time(0));
         generator.generate(maze, stoi(argv[3]));
 
-        cout << "Will generate maze with " << argv[1] << " rows and " << argv[2] << " columns with random seed\n";
+        // this_thread::sleep_for(chrono::seconds(2));
+
         break;
     }
 
     case 5:
     {
         maze = new Maze(stoi(argv[1]), stoi(argv[2]));
-        MazeGenerator generator(stol(argv[4]));
 
+        MazeGenerator generator(stol(argv[4]));
         generator.generate(maze, stoi(argv[3]));
 
-        cout << "Will generate maze with " << argv[1] << " rows and " << argv[2] << " columns with seed " << argv[4] << "\n";
+        // this_thread::sleep_for(chrono::seconds(2));
+
         break;
     }
     }
 
-    maze->print();
+    // maze->print();
 
-    sf::RenderWindow window(sf::VideoMode(stoi(argv[1]) * 10, stoi(argv[2]) * 10), "Maze", sf::Style::Titlebar | sf::Style::Close);
+    MazeSolver solver;
+    solver.bfsSolve(maze);
+    solver.dfsSolve(maze);
 
-    bool exitProgram = false;
-
-    while (!exitProgram && window.isOpen())
+    if (stoi(argv[1]) <= 50 && stoi(argv[2]) <= 50)
     {
-        sf::Event event;
+        sf::RenderWindow window(sf::VideoMode(stoi(argv[1]) * 10, stoi(argv[2]) * 10), "Maze", sf::Style::Titlebar | sf::Style::Close);
 
-        while (window.pollEvent(event))
+        while (window.isOpen())
         {
-            // "close requested" event: we close the window
-            if (event.type == sf::Event::Closed)
-            {
-                window.close();
-            }
-        }
+            sf::Event event;
 
-        maze->draw(&window);
+            while (window.pollEvent(event))
+            {
+                if (event.type == sf::Event::Closed)
+                {
+                    window.close();
+                }
+            }
+
+            maze->draw(&window);
+        }
+    }
+    else
+    {
+        cout << "Maze is too large to be displayed!\n";
     }
 
     return 0;

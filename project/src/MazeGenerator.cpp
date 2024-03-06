@@ -1,6 +1,8 @@
 #include "../include/Maze.hpp"
 #include "../include/MazeGenerator.hpp"
 
+#include <iostream>
+#include <chrono>
 #include <random>
 
 #define NORTH 0
@@ -10,6 +12,7 @@
 
 MazeGenerator::MazeGenerator(long seed)
 {
+    this->seed = seed;
     srand(seed);
 }
 
@@ -134,6 +137,19 @@ void MazeGenerator::randomWalk(Maze *maze)
 
 void MazeGenerator::generate(Maze *maze, bool multiplePaths)
 {
+    cout << "Will generate maze with " << maze->getRows() << " rows and " << maze->getColumns() << " columns with seed " << seed << ".\n";
+    if (multiplePaths)
+    {
+        cout << "Maze will have multiple possible paths.\n";
+    }
+    else
+    {
+        cout << "Maze will have only one possible path.\n";
+    }
+
+    std::chrono::steady_clock::time_point startTime = std::chrono::steady_clock::now();
+
+    cout << "Generating maze...\n";
     // Generate maze using Wilson's algorithm. The resulting maze will only
     // have one path from start to end.
 
@@ -169,4 +185,12 @@ void MazeGenerator::generate(Maze *maze, bool multiplePaths)
             }
         }
     }
+
+    std::chrono::steady_clock::time_point endTime = std::chrono::steady_clock::now();
+
+    cout << "Maze successfully generated in "
+         << std::chrono::duration_cast<std::chrono::microseconds>(endTime - startTime).count()
+         << " microseconds ("
+         << std::chrono::duration_cast<std::chrono::microseconds>(endTime - startTime).count() / 1000000.0
+         << " seconds)!\n";
 }

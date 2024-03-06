@@ -114,6 +114,24 @@ bool Maze::addEdge(pair<int, int> node1, pair<int, int> node2, int weight)
     return true;
 }
 
+int Maze::getEdgeWeight(pair<int, int> node1, pair<int, int> node2)
+{
+    for (int i = 0; i < adjacency[node1].size(); i++)
+    {
+        if (adjacency[node1][i].first == node2)
+        {
+            return adjacency[node1][i].second;
+        }
+    }
+
+    return -1;
+}
+
+vector<pair<pair<int, int>, int>> Maze::getAdjacencyList(pair<int, int> node)
+{
+    return adjacency[node];
+}
+
 void Maze::print()
 {
     for (int i = 0; i < rows; i++)
