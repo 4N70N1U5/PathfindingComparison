@@ -8,6 +8,7 @@ class MazeSolver
 public:
     void bfsSolve(Maze *);
     void dfsSolve(Maze *);
+    void dijkstraSolve(Maze *);
 };
 
 #endif

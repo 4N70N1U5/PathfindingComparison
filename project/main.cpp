@@ -75,6 +75,7 @@ int main(int argc, char *argv[])
     MazeSolver solver;
     solver.bfsSolve(maze);
     solver.dfsSolve(maze);
+    solver.dijkstraSolve(maze);
 
     if (stoi(argv[1]) <= 50 && stoi(argv[2]) <= 50)
     {

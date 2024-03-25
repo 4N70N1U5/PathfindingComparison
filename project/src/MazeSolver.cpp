@@ -161,3 +161,58 @@ void MazeSolver::dfsSolve(Maze *maze)
 
     cout << "DFS solve cost: " << total_cost << "\n";
 }
+
+void MazeSolver::dijkstraSolve(Maze *maze)
+{
+    std::chrono::steady_clock::time_point startTime = std::chrono::steady_clock::now();
+
+    cout << "Solving maze using Dijkstra's algorithm...\n";
+
+    priority_queue<pair<int, pair<int, int>>, vector<pair<int, pair<int, int>>>, greater<pair<int, pair<int, int>>>> pq;
+    unordered_map<pair<int, int>, int, boost::hash<pair<int, int>>> distances;
+    unordered_map<pair<int, int>, pair<int, int>, boost::hash<pair<int, int>>> parent;
+
+    for (int i = 0; i < maze->getRows(); i++)
+    {
+        for (int j = 0; j < maze->getColumns(); j++)
+        {
+            distances[{i, j}] = INT_MAX;
+        }
+    }
+
+    pq.push({0, {0, 0}});
+    distances[{0, 0}] = 0;
+
+    while (!pq.empty())
+    {
+        pair<int, int> current = pq.top().second;
+        pq.pop();
+
+        if (current == TARGET_NODE)
+        {
+            break;
+        }
+
+        for (auto neighbor : maze->getAdjacencyList(current))
+        {
+            int weight = neighbor.second;
+
+            if (distances[current] + weight < distances[neighbor.first])
+            {
+                pq.push({distances[neighbor.first], neighbor.first});
+                distances[neighbor.first] = distances[current] + weight;
+                parent[neighbor.first] = current;
+            }
+        }
+    }
+
+    std::chrono::steady_clock::time_point endTime = std::chrono::steady_clock::now();
+
+    cout << "Dijkstra's solve duration: "
+         << std::chrono::duration_cast<std::chrono::microseconds>(endTime - startTime).count()
+         << " microseconds ("
+         << std::chrono::duration_cast<std::chrono::microseconds>(endTime - startTime).count() / 1000000.0
+         << " seconds).\n";
+
+    cout << "Dijkstra's solve cost: " << distances[TARGET_NODE] << "\n";
+}
