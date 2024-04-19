@@ -6,9 +6,11 @@
 class MazeSolver
 {
 public:
-    void bfsSolve(Maze *);
-    void dfsSolve(Maze *);
-    void dijkstraSolve(Maze *);
+    void breadthFirstSearch(Maze *);
+    void depthFirstSearch(Maze *);
+    void dijkstra(Maze *);
+    void bestFirstSearch(Maze *);
+    void aStar(Maze *);
 };
 
 #endif

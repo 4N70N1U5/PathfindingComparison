@@ -73,9 +73,11 @@ int main(int argc, char *argv[])
     // maze->print();
 
     MazeSolver solver;
-    solver.bfsSolve(maze);
-    solver.dfsSolve(maze);
-    solver.dijkstraSolve(maze);
+    solver.breadthFirstSearch(maze);
+    solver.depthFirstSearch(maze);
+    solver.dijkstra(maze);
+    solver.bestFirstSearch(maze);
+    solver.aStar(maze);
 
     if (stoi(argv[1]) <= 50 && stoi(argv[2]) <= 50)
     {
