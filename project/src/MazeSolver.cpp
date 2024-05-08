@@ -12,6 +12,9 @@
 
 #define TARGET_NODE make_pair(maze->getRows() - 1, maze->getColumns() - 1)
 
+long long MazeSolver::bfsTime, MazeSolver::dfsTime, MazeSolver::dijkstraTime, MazeSolver::befsTime, MazeSolver::aStarTime;
+long long MazeSolver::bfsCost, MazeSolver::dfsCost, MazeSolver::dijkstraCost, MazeSolver::befsCost, MazeSolver::aStarCost;
+
 int heuristic(pair<int, int> a, pair<int, int> b)
 {
     return abs(a.first - b.first) + abs(a.second - b.second);
@@ -19,7 +22,7 @@ int heuristic(pair<int, int> a, pair<int, int> b)
 
 void MazeSolver::breadthFirstSearch(Maze *maze)
 {
-    cout << "Solving maze using Breadth-First Search algorithm... ";
+    cout << "Solving maze using Breadth-First Search algorithm... " << flush;
 
     queue<pair<int, int>> queue;
     unordered_map<pair<int, int>, bool, boost::hash<pair<int, int>>> visited;
@@ -91,7 +94,7 @@ void MazeSolver::breadthFirstSearch(Maze *maze)
 
 void MazeSolver::depthFirstSearch(Maze *maze)
 {
-    cout << "Solving maze using Depth-First Search algorithm... ";
+    cout << "Solving maze using Depth-First Search algorithm... " << flush;
 
     stack<pair<int, int>> stack;
     unordered_map<pair<int, int>, bool, boost::hash<pair<int, int>>> visited;
@@ -163,7 +166,7 @@ void MazeSolver::depthFirstSearch(Maze *maze)
 
 void MazeSolver::dijkstra(Maze *maze)
 {
-    cout << "Solving maze using Dijkstra's algorithm... ";
+    cout << "Solving maze using Dijkstra's algorithm... " << flush;
 
     priority_queue<pair<int, pair<int, int>>, vector<pair<int, pair<int, int>>>, greater<pair<int, pair<int, int>>>> queue;
     unordered_map<pair<int, int>, int, boost::hash<pair<int, int>>> distances;
@@ -215,7 +218,7 @@ void MazeSolver::dijkstra(Maze *maze)
 
 void MazeSolver::bestFirstSearch(Maze *maze)
 {
-    cout << "Solving maze using Best-First Search algorithm... ";
+    cout << "Solving maze using Best-First Search algorithm... " << flush;
 
     priority_queue<pair<int, pair<int, int>>, vector<pair<int, pair<int, int>>>, greater<pair<int, pair<int, int>>>> queue;
     unordered_map<pair<int, int>, bool, boost::hash<pair<int, int>>> visited;
@@ -280,7 +283,7 @@ void MazeSolver::bestFirstSearch(Maze *maze)
 
 void MazeSolver::aStar(Maze *maze)
 {
-    cout << "Solving maze using A* algorithm... ";
+    cout << "Solving maze using A* algorithm... " << flush;
 
     priority_queue<pair<int, pair<int, int>>, vector<pair<int, pair<int, int>>>, greater<pair<int, pair<int, int>>>> queue;
     unordered_map<pair<int, int>, int, boost::hash<pair<int, int>>> distances; // g(n)

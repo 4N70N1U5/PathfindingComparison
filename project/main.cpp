@@ -94,12 +94,11 @@ int main(int argc, char *argv[])
 
     generateMaze(maze, argc, argv);
 
-    MazeSolver solver;
-    solver.breadthFirstSearch(maze);
-    solver.depthFirstSearch(maze);
-    solver.dijkstra(maze);
-    solver.bestFirstSearch(maze);
-    solver.aStar(maze);
+    MazeSolver::breadthFirstSearch(maze);
+    MazeSolver::depthFirstSearch(maze);
+    MazeSolver::dijkstra(maze);
+    MazeSolver::bestFirstSearch(maze);
+    MazeSolver::aStar(maze);
 
     bool exitProgram = false;
     string input;
@@ -119,7 +118,7 @@ int main(int argc, char *argv[])
 
         if (input == "1")
         {
-            solver.printResults();
+            MazeSolver::printResults();
 
             cout << "\nPress enter to continue...";
             cin.get();

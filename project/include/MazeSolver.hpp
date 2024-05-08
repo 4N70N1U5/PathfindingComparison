@@ -6,17 +6,17 @@
 class MazeSolver
 {
 private:
-    long long bfsTime, dfsTime, dijkstraTime, befsTime, aStarTime;
-    long long bfsCost, dfsCost, dijkstraCost, befsCost, aStarCost;
+    static long long bfsTime, dfsTime, dijkstraTime, befsTime, aStarTime;
+    static long long bfsCost, dfsCost, dijkstraCost, befsCost, aStarCost;
 
 public:
-    void breadthFirstSearch(Maze *);
-    void depthFirstSearch(Maze *);
-    void dijkstra(Maze *);
-    void bestFirstSearch(Maze *);
-    void aStar(Maze *);
+    static void breadthFirstSearch(Maze *);
+    static void depthFirstSearch(Maze *);
+    static void dijkstra(Maze *);
+    static void bestFirstSearch(Maze *);
+    static void aStar(Maze *);
 
-    void printResults();
+    static void printResults();
 };
 
 #endif
