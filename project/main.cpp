@@ -34,21 +34,12 @@ bool validateInput(int argc, char *argv[])
     return true;
 }
 
-int main(int argc, char *argv[])
+void generateMaze(Maze *maze, int argc, char *argv[])
 {
-    if (!validateInput(argc, argv))
-    {
-        return 0;
-    }
-
-    Maze *maze;
-
     switch (argc)
     {
     case 4:
     {
-        maze = new Maze(stoi(argv[1]), stoi(argv[2]));
-
         MazeGenerator generator(time(0));
         generator.generate(maze, stoi(argv[3]));
 
@@ -59,8 +50,6 @@ int main(int argc, char *argv[])
 
     case 5:
     {
-        maze = new Maze(stoi(argv[1]), stoi(argv[2]));
-
         MazeGenerator generator(stol(argv[4]));
         generator.generate(maze, stoi(argv[3]));
 
@@ -69,8 +58,41 @@ int main(int argc, char *argv[])
         break;
     }
     }
+}
 
-    // maze->print();
+void clearConsole()
+{
+#if defined _WIN32
+    system("cls");
+#else
+    system("clear");
+#endif
+}
+
+void printMenuOptions()
+{
+    cout << "1: Print solve results\n";
+    cout << "2: Draw maze in new window\n";
+    cout << "3: Visualize BFS solve in new window\n";
+    cout << "4: Visualize DFS solve in new window\n";
+    cout << "5: Visualize Dijkstra solve in new window\n";
+    cout << "6: Visualize BeFS solve in new window\n";
+    cout << "7: Visualize A* solve in new window\n";
+    cout << "0: Exit\n";
+
+    cout << "\nChoose an option: ";
+}
+
+int main(int argc, char *argv[])
+{
+    if (!validateInput(argc, argv))
+    {
+        return 0;
+    }
+
+    Maze *maze = new Maze(stoi(argv[1]), stoi(argv[2]));
+
+    generateMaze(maze, argc, argv);
 
     MazeSolver solver;
     solver.breadthFirstSearch(maze);
@@ -79,29 +101,72 @@ int main(int argc, char *argv[])
     solver.bestFirstSearch(maze);
     solver.aStar(maze);
 
-    if (stoi(argv[1]) <= 50 && stoi(argv[2]) <= 50)
+    bool exitProgram = false;
+    string input;
+
+    sf::RenderWindow window;
+    window.setKeyRepeatEnabled(false);
+
+    while (!exitProgram)
     {
-        sf::RenderWindow window(sf::VideoMode(stoi(argv[1]) * 10, stoi(argv[2]) * 10), "Maze", sf::Style::Titlebar | sf::Style::Close);
+        clearConsole();
+        printMenuOptions();
 
-        while (window.isOpen())
+        cin >> input;
+        cin.get();
+
+        clearConsole();
+
+        if (input == "1")
         {
-            sf::Event event;
+            solver.printResults();
 
-            while (window.pollEvent(event))
+            cout << "\nPress enter to continue...";
+            cin.get();
+        }
+        else if (input == "2")
+        {
+            if (stoi(argv[1]) <= 50 && stoi(argv[2]) <= 50)
             {
-                if (event.type == sf::Event::Closed)
+                cout << "Close window to continue...\n";
+
+                window.create(sf::VideoMode(stoi(argv[1]) * 10, stoi(argv[2]) * 10), "Maze", sf::Style::Titlebar | sf::Style::Close);
+
+                while (window.isOpen())
                 {
-                    window.close();
+                    sf::Event event;
+
+                    while (window.pollEvent(event))
+                    {
+                        if (event.type == sf::Event::Closed)
+                        {
+                            window.close();
+                        }
+                    }
+
+                    maze->draw(&window);
                 }
             }
+            else
+            {
+                cout << "Maze is too large to be displayed!\n";
+                this_thread::sleep_for(chrono::seconds(2));
+            }
+        }
+        else if (input == "0")
+        {
+            exitProgram = true;
 
-            maze->draw(&window);
+            cout << "Program will exit...\n";
+            this_thread::sleep_for(chrono::seconds(2));
+        }
+        else
+        {
+            cout << "Invalid option! Try again.\n";
+            this_thread::sleep_for(chrono::seconds(2));
         }
     }
-    else
-    {
-        cout << "Maze is too large to be displayed!\n";
-    }
 
+    clearConsole();
     return 0;
 }

@@ -19,7 +19,7 @@ int heuristic(pair<int, int> a, pair<int, int> b)
 
 void MazeSolver::breadthFirstSearch(Maze *maze)
 {
-    cout << "Solving maze using Breadth-First Search algorithm...\n";
+    cout << "Solving maze using Breadth-First Search algorithm... ";
 
     queue<pair<int, int>> queue;
     unordered_map<pair<int, int>, bool, boost::hash<pair<int, int>>> visited;
@@ -76,11 +76,10 @@ void MazeSolver::breadthFirstSearch(Maze *maze)
 
     chrono::steady_clock::time_point endTime = chrono::steady_clock::now();
 
-    cout << "Breadth-First Search solve duration: "
-         << chrono::duration_cast<chrono::microseconds>(endTime - startTime).count()
-         << " microseconds ("
-         << chrono::duration_cast<chrono::microseconds>(endTime - startTime).count() / 1000000.0
-         << " seconds).\n";
+    bfsTime = chrono::duration_cast<chrono::microseconds>(endTime - startTime).count();
+    bfsCost = total_cost;
+
+    cout << "Done!\n";
 
     // cout << "Breadth-First Search solve path: ";
     // for (auto node : path)
@@ -88,13 +87,11 @@ void MazeSolver::breadthFirstSearch(Maze *maze)
     //     cout << "(" << node.first << ", " << node.second << ") ";
     // }
     // cout << "\n";
-
-    cout << "Breadth-First Search solve cost: " << total_cost << "\n";
 }
 
 void MazeSolver::depthFirstSearch(Maze *maze)
 {
-    cout << "Solving maze using Depth-First Search algorithm...\n";
+    cout << "Solving maze using Depth-First Search algorithm... ";
 
     stack<pair<int, int>> stack;
     unordered_map<pair<int, int>, bool, boost::hash<pair<int, int>>> visited;
@@ -151,11 +148,10 @@ void MazeSolver::depthFirstSearch(Maze *maze)
 
     chrono::steady_clock::time_point endTime = chrono::steady_clock::now();
 
-    cout << "Depth-First Search solve duration: "
-         << chrono::duration_cast<chrono::microseconds>(endTime - startTime).count()
-         << " microseconds ("
-         << chrono::duration_cast<chrono::microseconds>(endTime - startTime).count() / 1000000.0
-         << " seconds).\n";
+    dfsTime = chrono::duration_cast<chrono::microseconds>(endTime - startTime).count();
+    dfsCost = total_cost;
+
+    cout << "Done!\n";
 
     // cout << "Depth-First Search solve path: ";
     // for (auto node : path)
@@ -163,13 +159,11 @@ void MazeSolver::depthFirstSearch(Maze *maze)
     //     cout << "(" << node.first << ", " << node.second << ") ";
     // }
     // cout << "\n";
-
-    cout << "Depth-First Search solve cost: " << total_cost << "\n";
 }
 
 void MazeSolver::dijkstra(Maze *maze)
 {
-    cout << "Solving maze using Dijkstra's algorithm...\n";
+    cout << "Solving maze using Dijkstra's algorithm... ";
 
     priority_queue<pair<int, pair<int, int>>, vector<pair<int, pair<int, int>>>, greater<pair<int, pair<int, int>>>> queue;
     unordered_map<pair<int, int>, int, boost::hash<pair<int, int>>> distances;
@@ -213,18 +207,15 @@ void MazeSolver::dijkstra(Maze *maze)
 
     chrono::steady_clock::time_point endTime = chrono::steady_clock::now();
 
-    cout << "Dijkstra's solve duration: "
-         << chrono::duration_cast<chrono::microseconds>(endTime - startTime).count()
-         << " microseconds ("
-         << chrono::duration_cast<chrono::microseconds>(endTime - startTime).count() / 1000000.0
-         << " seconds).\n";
+    dijkstraTime = chrono::duration_cast<chrono::microseconds>(endTime - startTime).count();
+    dijkstraCost = distances[TARGET_NODE];
 
-    cout << "Dijkstra's solve cost: " << distances[TARGET_NODE] << "\n";
+    cout << "Done!\n";
 }
 
 void MazeSolver::bestFirstSearch(Maze *maze)
 {
-    cout << "Solving maze using Best-First Search algorithm...\n";
+    cout << "Solving maze using Best-First Search algorithm... ";
 
     priority_queue<pair<int, pair<int, int>>, vector<pair<int, pair<int, int>>>, greater<pair<int, pair<int, int>>>> queue;
     unordered_map<pair<int, int>, bool, boost::hash<pair<int, int>>> visited;
@@ -281,18 +272,15 @@ void MazeSolver::bestFirstSearch(Maze *maze)
 
     chrono::steady_clock::time_point endTime = chrono::steady_clock::now();
 
-    cout << "Best-First Search solve duration: "
-         << chrono::duration_cast<chrono::microseconds>(endTime - startTime).count()
-         << " microseconds ("
-         << chrono::duration_cast<chrono::microseconds>(endTime - startTime).count() / 1000000.0
-         << " seconds).\n";
+    befsTime = chrono::duration_cast<chrono::microseconds>(endTime - startTime).count();
+    befsCost = total_cost;
 
-    cout << "Best-First Search solve cost: " << total_cost << "\n";
+    cout << "Done!\n";
 }
 
 void MazeSolver::aStar(Maze *maze)
 {
-    cout << "Solving maze using A* algorithm...\n";
+    cout << "Solving maze using A* algorithm... ";
 
     priority_queue<pair<int, pair<int, int>>, vector<pair<int, pair<int, int>>>, greater<pair<int, pair<int, int>>>> queue;
     unordered_map<pair<int, int>, int, boost::hash<pair<int, int>>> distances; // g(n)
@@ -336,11 +324,59 @@ void MazeSolver::aStar(Maze *maze)
 
     chrono::steady_clock::time_point endTime = chrono::steady_clock::now();
 
-    cout << "A* solve duration: "
-         << chrono::duration_cast<chrono::microseconds>(endTime - startTime).count()
+    aStarTime = chrono::duration_cast<chrono::microseconds>(endTime - startTime).count();
+    aStarCost = distances[TARGET_NODE];
+
+    cout << "Done!\n";
+}
+
+void MazeSolver::printResults()
+{
+    cout << "Breadth-First Search solve duration: "
+         << bfsTime
          << " microseconds ("
-         << chrono::duration_cast<chrono::microseconds>(endTime - startTime).count() / 1000000.0
+         << bfsTime / 1000000.0
          << " seconds).\n";
 
-    cout << "A* solve cost: " << distances[TARGET_NODE] << "\n";
+    cout << "Breadth-First Search solve cost: " << bfsCost << "\n";
+
+    cout << "\n";
+
+    cout << "Depth-First Search solve duration: "
+         << dfsTime
+         << " microseconds ("
+         << dfsTime / 1000000.0
+         << " seconds).\n";
+
+    cout << "Depth-First Search solve cost: " << dfsCost << "\n";
+
+    cout << "\n";
+
+    cout << "Dijkstra's solve duration: "
+         << dijkstraTime
+         << " microseconds ("
+         << dijkstraTime / 1000000.0
+         << " seconds).\n";
+
+    cout << "Dijkstra's solve cost: " << dijkstraCost << "\n";
+
+    cout << "\n";
+
+    cout << "Best-First Search solve duration: "
+         << befsTime
+         << " microseconds ("
+         << befsTime / 1000000.0
+         << " seconds).\n";
+
+    cout << "Best-First Search solve cost: " << befsCost << "\n";
+
+    cout << "\n";
+
+    cout << "A* solve duration: "
+         << aStarTime
+         << " microseconds ("
+         << aStarTime / 1000000.0
+         << " seconds).\n";
+
+    cout << "A* solve cost: " << aStarCost << "\n";
 }
