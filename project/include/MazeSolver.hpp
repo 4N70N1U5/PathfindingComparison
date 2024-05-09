@@ -6,8 +6,10 @@
 class MazeSolver
 {
 private:
-    static long long bfsTime, dfsTime, dijkstraTime, befsTime, aStarTime;
-    static long long bfsCost, dfsCost, dijkstraCost, befsCost, aStarCost;
+    static int heuristicWeights[];
+    static long long bfsTime, dfsTime, dijkstraTime, befsTime;
+    static long long bfsCost, dfsCost, dijkstraCost, befsCost;
+    static unordered_map<int, int> aStarTime, aStarCost;
 
 public:
     static void breadthFirstSearch(Maze *);

@@ -12,8 +12,10 @@
 
 #define TARGET_NODE make_pair(maze->getRows() - 1, maze->getColumns() - 1)
 
-long long MazeSolver::bfsTime, MazeSolver::dfsTime, MazeSolver::dijkstraTime, MazeSolver::befsTime, MazeSolver::aStarTime;
-long long MazeSolver::bfsCost, MazeSolver::dfsCost, MazeSolver::dijkstraCost, MazeSolver::befsCost, MazeSolver::aStarCost;
+int MazeSolver::heuristicWeights[] = {1, 5, 10, 25, 50, 75, 100, 250, 500, 750, 1000, 2500, 5000, 7500, 10000};
+long long MazeSolver::bfsTime, MazeSolver::dfsTime, MazeSolver::dijkstraTime, MazeSolver::befsTime;
+long long MazeSolver::bfsCost, MazeSolver::dfsCost, MazeSolver::dijkstraCost, MazeSolver::befsCost;
+unordered_map<int, int> MazeSolver::aStarTime, MazeSolver::aStarCost;
 
 int heuristic(pair<int, int> a, pair<int, int> b)
 {
@@ -283,54 +285,57 @@ void MazeSolver::bestFirstSearch(Maze *maze)
 
 void MazeSolver::aStar(Maze *maze)
 {
-    cout << "Solving maze using A* algorithm... " << flush;
-
-    priority_queue<pair<int, pair<int, int>>, vector<pair<int, pair<int, int>>>, greater<pair<int, pair<int, int>>>> queue;
-    unordered_map<pair<int, int>, int, boost::hash<pair<int, int>>> distances; // g(n)
-    unordered_map<pair<int, int>, pair<int, int>, boost::hash<pair<int, int>>> parent;
-
-    for (int i = 0; i < maze->getRows(); i++)
+    for (auto heuristicWeight : heuristicWeights)
     {
-        for (int j = 0; j < maze->getColumns(); j++)
+        cout << "Solving maze using A* algorithm with " << heuristicWeight << " heuristic weight... " << flush;
+
+        priority_queue<pair<int, pair<int, int>>, vector<pair<int, pair<int, int>>>, greater<pair<int, pair<int, int>>>> queue;
+        unordered_map<pair<int, int>, int, boost::hash<pair<int, int>>> distances; // g(n)
+        unordered_map<pair<int, int>, pair<int, int>, boost::hash<pair<int, int>>> parent;
+
+        for (int i = 0; i < maze->getRows(); i++)
         {
-            distances[{i, j}] = INT_MAX;
-        }
-    }
-
-    chrono::steady_clock::time_point startTime = chrono::steady_clock::now();
-
-    distances[{0, 0}] = 0;
-    queue.push({distances[{0, 0}] + heuristic({0, 0}, TARGET_NODE), {0, 0}});
-
-    while (!queue.empty())
-    {
-        pair<int, int> current = queue.top().second;
-        queue.pop();
-
-        if (current == TARGET_NODE)
-        {
-            break;
-        }
-
-        for (auto neighbor : maze->getAdjacencyList(current))
-        {
-            int weight = neighbor.second;
-
-            if (distances[current] + weight < distances[neighbor.first])
+            for (int j = 0; j < maze->getColumns(); j++)
             {
-                distances[neighbor.first] = distances[current] + weight;
-                parent[neighbor.first] = current;
-                queue.push({distances[neighbor.first] + heuristic(neighbor.first, TARGET_NODE), neighbor.first});
+                distances[{i, j}] = INT_MAX;
             }
         }
+
+        chrono::steady_clock::time_point startTime = chrono::steady_clock::now();
+
+        distances[{0, 0}] = 0;
+        queue.push({distances[{0, 0}] + heuristic({0, 0}, TARGET_NODE), {0, 0}});
+
+        while (!queue.empty())
+        {
+            pair<int, int> current = queue.top().second;
+            queue.pop();
+
+            if (current == TARGET_NODE)
+            {
+                break;
+            }
+
+            for (auto neighbor : maze->getAdjacencyList(current))
+            {
+                int weight = neighbor.second;
+
+                if (distances[current] + weight < distances[neighbor.first])
+                {
+                    distances[neighbor.first] = distances[current] + weight;
+                    parent[neighbor.first] = current;
+                    queue.push({distances[neighbor.first] + heuristic(neighbor.first, TARGET_NODE) * heuristicWeight, neighbor.first});
+                }
+            }
+        }
+
+        chrono::steady_clock::time_point endTime = chrono::steady_clock::now();
+
+        aStarTime[heuristicWeight] = chrono::duration_cast<chrono::microseconds>(endTime - startTime).count();
+        aStarCost[heuristicWeight] = distances[TARGET_NODE];
+
+        cout << "Done!\n";
     }
-
-    chrono::steady_clock::time_point endTime = chrono::steady_clock::now();
-
-    aStarTime = chrono::duration_cast<chrono::microseconds>(endTime - startTime).count();
-    aStarCost = distances[TARGET_NODE];
-
-    cout << "Done!\n";
 }
 
 void MazeSolver::printResults()
@@ -373,13 +378,16 @@ void MazeSolver::printResults()
 
     cout << "Best-First Search solve cost: " << befsCost << "\n";
 
-    cout << "\n";
+    for (auto heuristicWeight : heuristicWeights)
+    {
+        cout << "\n";
 
-    cout << "A* solve duration: "
-         << aStarTime
-         << " microseconds ("
-         << aStarTime / 1000000.0
-         << " seconds).\n";
+        cout << "A* with " << heuristicWeight << " heuristic weight solve duration: "
+             << aStarTime[heuristicWeight]
+             << " microseconds ("
+             << aStarTime[heuristicWeight] / 1000000.0
+             << " seconds).\n";
 
-    cout << "A* solve cost: " << aStarCost << "\n";
+        cout << "A* with " << heuristicWeight << " heuristic weight solve cost: " << aStarCost[heuristicWeight] << "\n";
+    }
 }
