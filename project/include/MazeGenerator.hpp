@@ -14,11 +14,8 @@ class MazeGenerator
 private:
     static unordered_set<pair<int, int>, boost::hash<pair<int, int>>> included;
 
-    // int getDirectionBetween(pair<int, int>, pair<int, int>);
-    // pair<int, int> getNeighbor(pair<int, int>, int);
-    // vector<pair<int, int>> getAllNeighbors(Maze *, pair<int, int>);
     static pair<int, int> getRandomUnvisited(Maze *);
-    static void randomWalk(Maze *, bool);
+    static void randomWalk(Maze *, int);
 
 public:
     static void generate(Maze *, bool, bool, long = time(0));

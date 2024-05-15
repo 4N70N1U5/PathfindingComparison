@@ -14,20 +14,18 @@ private:
     int rows, columns;
     unordered_map<pair<int, int>, vector<pair<pair<int, int>, int>>, boost::hash<pair<int, int>>> adjacency;
 
-    vector<pair<pair<int, int>, int>> getAllNeighbors(pair<int, int>);
-    bool areNeighbors(pair<int, int>, pair<int, int>);
-    void drawWall(sf::RenderWindow *, pair<int, int>, int);
-
 public:
     Maze(int, int);
 
     int getRows();
     int getColumns();
 
-    bool addEdge(pair<int, int>, pair<int, int>, int);
-
     int getEdgeWeight(pair<int, int>, pair<int, int>);
     vector<pair<pair<int, int>, int>> getAdjacencyList(pair<int, int>);
+    vector<pair<pair<int, int>, int>> getAllNeighbors(pair<int, int>);
+
+    bool areConnected(pair<int, int>, pair<int, int>);
+    bool addEdge(pair<int, int>, pair<int, int>, int);
 
     void print();
     void draw(sf::RenderWindow *);

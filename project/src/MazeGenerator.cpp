@@ -12,32 +12,6 @@
 
 unordered_set<pair<int, int>, boost::hash<pair<int, int>>> MazeGenerator::included;
 
-int getDirectionBetween(pair<int, int> node1, pair<int, int> node2)
-{
-    if (node1.first == node2.first)
-    {
-        if (node1.second < node2.second)
-        {
-            return EAST;
-        }
-        else
-        {
-            return WEST;
-        }
-    }
-    else
-    {
-        if (node1.first < node2.first)
-        {
-            return SOUTH;
-        }
-        else
-        {
-            return NORTH;
-        }
-    }
-}
-
 pair<int, int> getNeighbor(pair<int, int> node, int direction)
 {
     switch (direction)
@@ -59,33 +33,6 @@ pair<int, int> getNeighbor(pair<int, int> node, int direction)
     }
 }
 
-vector<pair<int, int>> getAllNeighbors(Maze *maze, pair<int, int> node)
-{
-    vector<pair<int, int>> neighbors;
-
-    if (node.first > 0)
-    {
-        neighbors.push_back({node.first - 1, node.second}); // Northern neighbor
-    }
-
-    if (node.second < maze->getColumns() - 1)
-    {
-        neighbors.push_back({node.first, node.second + 1}); // Eastern neighbor
-    }
-
-    if (node.first < maze->getRows() - 1)
-    {
-        neighbors.push_back({node.first + 1, node.second}); // Southern neighbor
-    }
-
-    if (node.second > 0)
-    {
-        neighbors.push_back({node.first, node.second - 1}); // Western neighbor
-    }
-
-    return neighbors;
-}
-
 pair<int, int> MazeGenerator::getRandomUnvisited(Maze *maze)
 {
     pair<int, int> node;
@@ -99,7 +46,7 @@ pair<int, int> MazeGenerator::getRandomUnvisited(Maze *maze)
     return node;
 }
 
-void MazeGenerator::randomWalk(Maze *maze, bool weighted)
+void MazeGenerator::randomWalk(Maze *maze, int maxWeight)
 {
     pair<int, int> startNode = getRandomUnvisited(maze);
     unordered_map<pair<int, int>, int, boost::hash<pair<int, int>>> directionTaken;
@@ -108,10 +55,11 @@ void MazeGenerator::randomWalk(Maze *maze, bool weighted)
 
     while (included.find(currentNode) == included.end())
     {
-        vector<pair<int, int>> neighbors = getAllNeighbors(maze, currentNode);
-        neighbor = neighbors[rand() % neighbors.size()];
+        vector<pair<pair<int, int>, int>> neighbors = maze->getAllNeighbors(currentNode);
+        int neighborIndex = rand() % neighbors.size();
 
-        directionTaken[currentNode] = getDirectionBetween(currentNode, neighbor);
+        neighbor = neighbors[neighborIndex].first;
+        directionTaken[currentNode] = neighbors[neighborIndex].second;
 
         currentNode = neighbor;
     }
@@ -126,14 +74,7 @@ void MazeGenerator::randomWalk(Maze *maze, bool weighted)
 
         neighbor = getNeighbor(currentNode, directionTaken[currentNode]);
 
-        if (weighted)
-        {
-            maze->addEdge(currentNode, neighbor, rand() % 1000 + 1);
-        }
-        else
-        {
-            maze->addEdge(currentNode, neighbor, 1);
-        }
+        maze->addEdge(currentNode, neighbor, rand() % maxWeight + 1);
 
         currentNode = neighbor;
     }
@@ -147,13 +88,19 @@ void MazeGenerator::generate(Maze *maze, bool weighted, bool multiplePaths, long
 
     cout << "Will generate maze with " << maze->getRows() << " rows and " << maze->getColumns() << " columns with seed " << seed << ".\n";
 
+    int maxWeight;
+
     if (weighted)
     {
         cout << "Maze will be a weighted graph.\n";
+
+        maxWeight = maze->getRows() * maze->getColumns() * 10;
     }
     else
     {
         cout << "Maze will be an unweighted graph.\n";
+
+        maxWeight = 1;
     }
 
     if (multiplePaths)
@@ -169,9 +116,6 @@ void MazeGenerator::generate(Maze *maze, bool weighted, bool multiplePaths, long
 
     cout << "Generating maze... " << flush;
 
-    // Generate maze using Wilson's algorithm. The resulting maze will only
-    // have one path from start to end.
-
     included.erase(included.begin(), included.end());
 
     included.insert({0, 0});
@@ -180,9 +124,6 @@ void MazeGenerator::generate(Maze *maze, bool weighted, bool multiplePaths, long
     {
         randomWalk(maze, weighted);
     }
-
-    // Add new edges to the maze to create cycles that will introduce new
-    // paths to solve the maze.
 
     if (multiplePaths)
     {
@@ -195,17 +136,10 @@ void MazeGenerator::generate(Maze *maze, bool weighted, bool multiplePaths, long
             node.first = rand() % maze->getRows();
             node.second = rand() % maze->getColumns();
 
-            vector<pair<int, int>> neighbors = getAllNeighbors(maze, node);
-            pair<int, int> neighbor = neighbors[rand() % neighbors.size()];
+            vector<pair<pair<int, int>, int>> neighbors = maze->getAllNeighbors(node);
+            pair<int, int> neighbor = neighbors[rand() % neighbors.size()].first;
 
-            if (weighted)
-            {
-                if (maze->addEdge(node, neighbor, rand() % 1000 + 1))
-                {
-                    i++;
-                }
-            }
-            else if (maze->addEdge(node, neighbor, 1))
+            if (maze->addEdge(node, neighbor, rand() % maxWeight + 1))
             {
                 i++;
             }

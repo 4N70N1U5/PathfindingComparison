@@ -15,34 +15,62 @@ Maze::Maze(int rows, int columns)
     this->columns = columns;
 }
 
+int Maze::getRows()
+{
+    return rows;
+}
+
+int Maze::getColumns()
+{
+    return columns;
+}
+
+int Maze::getEdgeWeight(pair<int, int> node1, pair<int, int> node2)
+{
+    for (int i = 0; i < adjacency[node1].size(); i++)
+    {
+        if (adjacency[node1][i].first == node2)
+        {
+            return adjacency[node1][i].second;
+        }
+    }
+
+    return -1;
+}
+
+vector<pair<pair<int, int>, int>> Maze::getAdjacencyList(pair<int, int> node)
+{
+    return adjacency[node];
+}
+
 vector<pair<pair<int, int>, int>> Maze::getAllNeighbors(pair<int, int> node)
 {
     vector<pair<pair<int, int>, int>> neighbors;
 
     if (node.first > 0)
     {
-        neighbors.push_back({{node.first - 1, node.second}, NORTH}); // Northern neighbor
+        neighbors.push_back({{node.first - 1, node.second}, NORTH});
     }
 
     if (node.second < columns - 1)
     {
-        neighbors.push_back({{node.first, node.second + 1}, EAST}); // Eastern neighbor
+        neighbors.push_back({{node.first, node.second + 1}, EAST});
     }
 
     if (node.first < rows - 1)
     {
-        neighbors.push_back({{node.first + 1, node.second}, SOUTH}); // Southern neighbor
+        neighbors.push_back({{node.first + 1, node.second}, SOUTH});
     }
 
     if (node.second > 0)
     {
-        neighbors.push_back({{node.first, node.second - 1}, WEST}); // Western neighbor
+        neighbors.push_back({{node.first, node.second - 1}, WEST});
     }
 
     return neighbors;
 }
 
-bool Maze::areNeighbors(pair<int, int> node1, pair<int, int> node2)
+bool Maze::areConnected(pair<int, int> node1, pair<int, int> node2)
 {
     for (int i = 0; i < adjacency[node1].size(); i++)
     {
@@ -55,7 +83,38 @@ bool Maze::areNeighbors(pair<int, int> node1, pair<int, int> node2)
     return false;
 }
 
-void Maze::drawWall(sf::RenderWindow *window, pair<int, int> wallLocation, int wallPosition)
+bool Maze::addEdge(pair<int, int> node1, pair<int, int> node2, int weight)
+{
+    if (areConnected(node1, node2))
+    {
+        return false;
+    }
+
+    adjacency[node1].push_back({node2, weight});
+    adjacency[node2].push_back({node1, weight});
+
+    return true;
+}
+
+void Maze::print()
+{
+    for (int i = 0; i < rows; i++)
+    {
+        for (int j = 0; j < columns; j++)
+        {
+            cout << "Node (" << i << ", " << j << "): ";
+
+            for (auto neighbor : adjacency[{i, j}])
+            {
+                cout << "{(" << neighbor.first.first << ", " << neighbor.first.second << "), " << neighbor.second << "} ";
+            }
+
+            cout << "\n";
+        }
+    }
+}
+
+void drawWall(sf::RenderWindow *window, pair<int, int> wallLocation, int wallPosition)
 {
     wallLocation.first++;
     wallLocation.second++;
@@ -94,65 +153,6 @@ void Maze::drawWall(sf::RenderWindow *window, pair<int, int> wallLocation, int w
     }
 }
 
-int Maze::getRows()
-{
-    return rows;
-}
-
-int Maze::getColumns()
-{
-    return columns;
-}
-
-bool Maze::addEdge(pair<int, int> node1, pair<int, int> node2, int weight)
-{
-    if (areNeighbors(node1, node2))
-    {
-        return false;
-    }
-
-    adjacency[node1].push_back({node2, weight});
-    adjacency[node2].push_back({node1, weight});
-
-    return true;
-}
-
-int Maze::getEdgeWeight(pair<int, int> node1, pair<int, int> node2)
-{
-    for (int i = 0; i < adjacency[node1].size(); i++)
-    {
-        if (adjacency[node1][i].first == node2)
-        {
-            return adjacency[node1][i].second;
-        }
-    }
-
-    return -1;
-}
-
-vector<pair<pair<int, int>, int>> Maze::getAdjacencyList(pair<int, int> node)
-{
-    return adjacency[node];
-}
-
-void Maze::print()
-{
-    for (int i = 0; i < rows; i++)
-    {
-        for (int j = 0; j < columns; j++)
-        {
-            cout << "Node (" << i << ", " << j << "): ";
-
-            for (auto neighbor : adjacency[{i, j}])
-            {
-                cout << "{(" << neighbor.first.first << ", " << neighbor.first.second << "), " << neighbor.second << "} ";
-            }
-
-            cout << "\n";
-        }
-    }
-}
-
 void Maze::draw(sf::RenderWindow *window)
 {
     for (int i = 0; i < rows; i++)
@@ -161,7 +161,7 @@ void Maze::draw(sf::RenderWindow *window)
         {
             for (auto neighbor : getAllNeighbors({i, j}))
             {
-                if (!areNeighbors({i, j}, neighbor.first))
+                if (!areConnected({i, j}, neighbor.first))
                 {
                     drawWall(window, {i, j}, neighbor.second);
                 }
