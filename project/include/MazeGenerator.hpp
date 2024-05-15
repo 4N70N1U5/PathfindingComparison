@@ -18,10 +18,10 @@ private:
     // pair<int, int> getNeighbor(pair<int, int>, int);
     // vector<pair<int, int>> getAllNeighbors(Maze *, pair<int, int>);
     static pair<int, int> getRandomUnvisited(Maze *);
-    static void randomWalk(Maze *);
+    static void randomWalk(Maze *, bool);
 
 public:
-    static void generate(Maze *, bool, long = time(0));
+    static void generate(Maze *, bool, bool, long = time(0));
 };
 
 #endif

@@ -11,7 +11,7 @@ using namespace std;
 
 bool validateInput(int argc, char *argv[])
 {
-    if (argc != 4 && argc != 5)
+    if (argc != 5 && argc != 6)
     {
         cout << "Incorrect argument list!\n";
         return false;
@@ -22,9 +22,10 @@ bool validateInput(int argc, char *argv[])
         stoi(argv[1]);
         stoi(argv[2]);
         stoi(argv[3]);
-        if (argc == 5)
+        stoi(argv[4]);
+        if (argc == 6)
         {
-            stol(argv[4]);
+            stol(argv[5]);
         }
     }
     catch (const exception &e)
@@ -41,6 +42,12 @@ bool validateInput(int argc, char *argv[])
 
     if (stoi(argv[3]) != 0 && stoi(argv[3]) != 1)
     {
+        cout << "The value for weighted graph must be either 0 (unweighted graph) or 1 (weighted graph)!\n";
+        return false;
+    }
+
+    if (stoi(argv[4]) != 0 && stoi(argv[4]) != 1)
+    {
         cout << "The value for multiple paths must be either 0 (do not create multiple paths) or 1 (create multiple paths)!\n";
         return false;
     }
@@ -52,15 +59,15 @@ void generateMaze(Maze *maze, int argc, char *argv[])
 {
     switch (argc)
     {
-    case 4:
+    case 5:
     {
-        MazeGenerator::generate(maze, stoi(argv[3]));
+        MazeGenerator::generate(maze, stoi(argv[3]), stoi(argv[4]));
         break;
     }
 
-    case 5:
+    case 6:
     {
-        MazeGenerator::generate(maze, stoi(argv[3]), stol(argv[4]));
+        MazeGenerator::generate(maze, stoi(argv[3]), stoi(argv[4]), stol(argv[5]));
         break;
     }
     }

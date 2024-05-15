@@ -99,7 +99,7 @@ pair<int, int> MazeGenerator::getRandomUnvisited(Maze *maze)
     return node;
 }
 
-void MazeGenerator::randomWalk(Maze *maze)
+void MazeGenerator::randomWalk(Maze *maze, bool weighted)
 {
     pair<int, int> startNode = getRandomUnvisited(maze);
     unordered_map<pair<int, int>, int, boost::hash<pair<int, int>>> directionTaken;
@@ -125,19 +125,37 @@ void MazeGenerator::randomWalk(Maze *maze)
         included.insert(currentNode);
 
         neighbor = getNeighbor(currentNode, directionTaken[currentNode]);
-        maze->addEdge(currentNode, neighbor, rand() % 1000 + 1);
+
+        if (weighted)
+        {
+            maze->addEdge(currentNode, neighbor, rand() % 1000 + 1);
+        }
+        else
+        {
+            maze->addEdge(currentNode, neighbor, 1);
+        }
 
         currentNode = neighbor;
     }
 }
 
-void MazeGenerator::generate(Maze *maze, bool multiplePaths, long seed)
+void MazeGenerator::generate(Maze *maze, bool weighted, bool multiplePaths, long seed)
 {
     included.clear();
 
     srand(seed);
 
     cout << "Will generate maze with " << maze->getRows() << " rows and " << maze->getColumns() << " columns with seed " << seed << ".\n";
+
+    if (weighted)
+    {
+        cout << "Maze will be a weighted graph.\n";
+    }
+    else
+    {
+        cout << "Maze will be an unweighted graph.\n";
+    }
+
     if (multiplePaths)
     {
         cout << "Maze will have multiple possible paths.\n";
@@ -149,7 +167,8 @@ void MazeGenerator::generate(Maze *maze, bool multiplePaths, long seed)
 
     std::chrono::steady_clock::time_point startTime = std::chrono::steady_clock::now();
 
-    cout << "Generating maze...\n";
+    cout << "Generating maze... " << flush;
+
     // Generate maze using Wilson's algorithm. The resulting maze will only
     // have one path from start to end.
 
@@ -159,7 +178,7 @@ void MazeGenerator::generate(Maze *maze, bool multiplePaths, long seed)
 
     while (included.size() < maze->getRows() * maze->getColumns())
     {
-        randomWalk(maze);
+        randomWalk(maze, weighted);
     }
 
     // Add new edges to the maze to create cycles that will introduce new
@@ -167,7 +186,7 @@ void MazeGenerator::generate(Maze *maze, bool multiplePaths, long seed)
 
     if (multiplePaths)
     {
-        int additionalPaths = (maze->getRows() * maze->getColumns()) * ((double)(rand() % 5 + 1) / 100);
+        int additionalPaths = (maze->getRows() * maze->getColumns()) * ((double)(rand() % 26 + 25) / 100.0);
 
         for (int i = 0; i < additionalPaths;)
         {
@@ -179,7 +198,14 @@ void MazeGenerator::generate(Maze *maze, bool multiplePaths, long seed)
             vector<pair<int, int>> neighbors = getAllNeighbors(maze, node);
             pair<int, int> neighbor = neighbors[rand() % neighbors.size()];
 
-            if (maze->addEdge(node, neighbor, rand() % 1000 + 1))
+            if (weighted)
+            {
+                if (maze->addEdge(node, neighbor, rand() % 1000 + 1))
+                {
+                    i++;
+                }
+            }
+            else if (maze->addEdge(node, neighbor, 1))
             {
                 i++;
             }
@@ -187,6 +213,8 @@ void MazeGenerator::generate(Maze *maze, bool multiplePaths, long seed)
     }
 
     std::chrono::steady_clock::time_point endTime = std::chrono::steady_clock::now();
+
+    cout << "Done!\n";
 
     cout << "Maze successfully generated in "
          << std::chrono::duration_cast<std::chrono::microseconds>(endTime - startTime).count()
