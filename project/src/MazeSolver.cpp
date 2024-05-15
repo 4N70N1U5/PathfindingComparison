@@ -22,7 +22,7 @@ int heuristic(pair<int, int> a, pair<int, int> b)
     return abs(a.first - b.first) + abs(a.second - b.second);
 }
 
-void MazeSolver::breadthFirstSearch(Maze *maze)
+void MazeSolver::breadthFirstSearch(Maze *maze, vector<pair<pair<int, int>, sf::Color>> *nodeColors)
 {
     cout << "Solving maze using Breadth-First Search algorithm... " << flush;
 
@@ -48,6 +48,11 @@ void MazeSolver::breadthFirstSearch(Maze *maze)
         pair<int, int> current = queue.front();
         queue.pop();
 
+        if (nodeColors != nullptr)
+        {
+            nodeColors->push_back({current, sf::Color::Green});
+        }
+
         if (current == TARGET_NODE)
         {
             break;
@@ -60,6 +65,11 @@ void MazeSolver::breadthFirstSearch(Maze *maze)
                 visited[neighbor.first] = true;
                 parent[neighbor.first] = current;
                 queue.push(neighbor.first);
+
+                if (nodeColors != nullptr)
+                {
+                    nodeColors->push_back({neighbor.first, sf::Color(255, 165, 0)});
+                }
             }
         }
     }
@@ -74,27 +84,30 @@ void MazeSolver::breadthFirstSearch(Maze *maze)
         path.push_front(current);
         total_cost += maze->getEdgeWeight(parent[current], current);
 
+        if (nodeColors != nullptr)
+        {
+            nodeColors->push_back({current, sf::Color::Blue});
+        }
+
         current = parent[current];
     }
 
     path.push_front(make_pair(0, 0));
+
+    if (nodeColors != nullptr)
+    {
+        nodeColors->push_back({make_pair(0, 0), sf::Color::Blue});
+    }
 
     chrono::steady_clock::time_point endTime = chrono::steady_clock::now();
 
     bfsTime = chrono::duration_cast<chrono::microseconds>(endTime - startTime).count();
     bfsCost = total_cost;
 
-    cout << "Done!\n";
-
-    // cout << "Breadth-First Search solve path: ";
-    // for (auto node : path)
-    // {
-    //     cout << "(" << node.first << ", " << node.second << ") ";
-    // }
-    // cout << "\n";
+    cout << "Done! (elapsed time: " << bfsTime / 1000000.0 << "s)\n";
 }
 
-void MazeSolver::depthFirstSearch(Maze *maze)
+void MazeSolver::depthFirstSearch(Maze *maze, vector<pair<pair<int, int>, sf::Color>> *nodeColors)
 {
     cout << "Solving maze using Depth-First Search algorithm... " << flush;
 
@@ -120,6 +133,11 @@ void MazeSolver::depthFirstSearch(Maze *maze)
         pair<int, int> current = stack.top();
         stack.pop();
 
+        if (nodeColors != nullptr)
+        {
+            nodeColors->push_back({current, sf::Color::Green});
+        }
+
         if (current == TARGET_NODE)
         {
             break;
@@ -132,6 +150,11 @@ void MazeSolver::depthFirstSearch(Maze *maze)
                 visited[neighbor.first] = true;
                 parent[neighbor.first] = current;
                 stack.push(neighbor.first);
+
+                if (nodeColors != nullptr)
+                {
+                    nodeColors->push_back({neighbor.first, sf::Color(255, 165, 0)});
+                }
             }
         }
     }
@@ -146,51 +169,59 @@ void MazeSolver::depthFirstSearch(Maze *maze)
         path.push_front(current);
         total_cost += maze->getEdgeWeight(parent[current], current);
 
+        if (nodeColors != nullptr)
+        {
+            nodeColors->push_back({current, sf::Color::Blue});
+        }
+
         current = parent[current];
     }
 
     path.push_front(make_pair(0, 0));
+
+    if (nodeColors != nullptr)
+    {
+        nodeColors->push_back({make_pair(0, 0), sf::Color::Blue});
+    }
 
     chrono::steady_clock::time_point endTime = chrono::steady_clock::now();
 
     dfsTime = chrono::duration_cast<chrono::microseconds>(endTime - startTime).count();
     dfsCost = total_cost;
 
-    cout << "Done!\n";
-
-    // cout << "Depth-First Search solve path: ";
-    // for (auto node : path)
-    // {
-    //     cout << "(" << node.first << ", " << node.second << ") ";
-    // }
-    // cout << "\n";
+    cout << "Done! (elapsed time: " << dfsTime / 1000000.0 << "s)\n";
 }
 
-void MazeSolver::dijkstra(Maze *maze)
+void MazeSolver::dijkstra(Maze *maze, vector<pair<pair<int, int>, sf::Color>> *nodeColors)
 {
     cout << "Solving maze using Dijkstra's algorithm... " << flush;
 
     priority_queue<pair<int, pair<int, int>>, vector<pair<int, pair<int, int>>>, greater<pair<int, pair<int, int>>>> queue;
-    unordered_map<pair<int, int>, int, boost::hash<pair<int, int>>> distances;
+    unordered_map<pair<int, int>, int, boost::hash<pair<int, int>>> costs;
     unordered_map<pair<int, int>, pair<int, int>, boost::hash<pair<int, int>>> parent;
 
     for (int i = 0; i < maze->getRows(); i++)
     {
         for (int j = 0; j < maze->getColumns(); j++)
         {
-            distances[{i, j}] = INT_MAX;
+            costs[{i, j}] = INT_MAX;
         }
     }
 
     chrono::steady_clock::time_point startTime = chrono::steady_clock::now();
 
-    distances[{0, 0}] = 0;
-    queue.push({0, {0, 0}});
+    costs[{0, 0}] = 0;
+    queue.push({costs[{0, 0}], {0, 0}});
 
     while (!queue.empty())
     {
         pair<int, int> current = queue.top().second;
         queue.pop();
+
+        if (nodeColors != nullptr)
+        {
+            nodeColors->push_back({current, sf::Color::Green});
+        }
 
         if (current == TARGET_NODE)
         {
@@ -201,24 +232,52 @@ void MazeSolver::dijkstra(Maze *maze)
         {
             int weight = neighbor.second;
 
-            if (distances[current] + weight < distances[neighbor.first])
+            if (costs[current] + weight < costs[neighbor.first])
             {
-                distances[neighbor.first] = distances[current] + weight;
+                costs[neighbor.first] = costs[current] + weight;
                 parent[neighbor.first] = current;
-                queue.push({distances[neighbor.first], neighbor.first});
+                queue.push({costs[neighbor.first], neighbor.first});
+
+                if (nodeColors != nullptr)
+                {
+                    nodeColors->push_back({neighbor.first, sf::Color(255, 165, 0)});
+                }
             }
         }
+    }
+
+    list<pair<int, int>> path;
+
+    pair<int, int> current = TARGET_NODE;
+
+    while (current != make_pair(0, 0))
+    {
+        path.push_front(current);
+
+        if (nodeColors != nullptr)
+        {
+            nodeColors->push_back({current, sf::Color::Blue});
+        }
+
+        current = parent[current];
+    }
+
+    path.push_front(make_pair(0, 0));
+
+    if (nodeColors != nullptr)
+    {
+        nodeColors->push_back({make_pair(0, 0), sf::Color::Blue});
     }
 
     chrono::steady_clock::time_point endTime = chrono::steady_clock::now();
 
     dijkstraTime = chrono::duration_cast<chrono::microseconds>(endTime - startTime).count();
-    dijkstraCost = distances[TARGET_NODE];
+    dijkstraCost = costs[TARGET_NODE];
 
-    cout << "Done!\n";
+    cout << "Done! (elapsed time: " << dijkstraTime / 1000000.0 << "s)\n";
 }
 
-void MazeSolver::bestFirstSearch(Maze *maze)
+void MazeSolver::bestFirstSearch(Maze *maze, vector<pair<pair<int, int>, sf::Color>> *nodeColors)
 {
     cout << "Solving maze using Best-First Search algorithm... " << flush;
 
@@ -244,6 +303,11 @@ void MazeSolver::bestFirstSearch(Maze *maze)
         pair<int, int> current = queue.top().second;
         queue.pop();
 
+        if (nodeColors != nullptr)
+        {
+            nodeColors->push_back({current, sf::Color::Green});
+        }
+
         if (current == TARGET_NODE)
         {
             break;
@@ -256,6 +320,11 @@ void MazeSolver::bestFirstSearch(Maze *maze)
                 visited[neighbor.first] = true;
                 parent[neighbor.first] = current;
                 queue.push({heuristic(neighbor.first, TARGET_NODE), neighbor.first});
+
+                if (nodeColors != nullptr)
+                {
+                    nodeColors->push_back({neighbor.first, sf::Color(255, 165, 0)});
+                }
             }
         }
     }
@@ -270,71 +339,119 @@ void MazeSolver::bestFirstSearch(Maze *maze)
         path.push_front(current);
         total_cost += maze->getEdgeWeight(parent[current], current);
 
+        if (nodeColors != nullptr)
+        {
+            nodeColors->push_back({current, sf::Color::Blue});
+        }
+
         current = parent[current];
     }
 
     path.push_front(make_pair(0, 0));
+
+    if (nodeColors != nullptr)
+    {
+        nodeColors->push_back({make_pair(0, 0), sf::Color::Blue});
+    }
 
     chrono::steady_clock::time_point endTime = chrono::steady_clock::now();
 
     befsTime = chrono::duration_cast<chrono::microseconds>(endTime - startTime).count();
     befsCost = total_cost;
 
-    cout << "Done!\n";
+    cout << "Done! (elapsed time: " << befsTime / 1000000.0 << "s)\n";
 }
 
-void MazeSolver::aStar(Maze *maze)
+void MazeSolver::aStar(Maze *maze, int heuristicWeight, vector<pair<pair<int, int>, sf::Color>> *nodeColors)
 {
-    for (auto heuristicWeight : heuristicWeights)
+    cout << "Solving maze using A* algorithm with " << heuristicWeight << " heuristic weight... " << flush;
+
+    priority_queue<pair<int, pair<int, int>>, vector<pair<int, pair<int, int>>>, greater<pair<int, pair<int, int>>>> queue;
+    unordered_map<pair<int, int>, int, boost::hash<pair<int, int>>> costs; // g(n)
+    unordered_map<pair<int, int>, pair<int, int>, boost::hash<pair<int, int>>> parent;
+
+    for (int i = 0; i < maze->getRows(); i++)
     {
-        cout << "Solving maze using A* algorithm with " << heuristicWeight << " heuristic weight... " << flush;
-
-        priority_queue<pair<int, pair<int, int>>, vector<pair<int, pair<int, int>>>, greater<pair<int, pair<int, int>>>> queue;
-        unordered_map<pair<int, int>, int, boost::hash<pair<int, int>>> distances; // g(n)
-        unordered_map<pair<int, int>, pair<int, int>, boost::hash<pair<int, int>>> parent;
-
-        for (int i = 0; i < maze->getRows(); i++)
+        for (int j = 0; j < maze->getColumns(); j++)
         {
-            for (int j = 0; j < maze->getColumns(); j++)
-            {
-                distances[{i, j}] = INT_MAX;
-            }
+            costs[{i, j}] = INT_MAX;
+        }
+    }
+
+    chrono::steady_clock::time_point startTime = chrono::steady_clock::now();
+
+    costs[{0, 0}] = 0;
+    queue.push({costs[{0, 0}] + heuristic({0, 0}, TARGET_NODE), {0, 0}});
+
+    while (!queue.empty())
+    {
+        pair<int, int> current = queue.top().second;
+        queue.pop();
+
+        if (nodeColors != nullptr)
+        {
+            nodeColors->push_back({current, sf::Color::Green});
         }
 
-        chrono::steady_clock::time_point startTime = chrono::steady_clock::now();
-
-        distances[{0, 0}] = 0;
-        queue.push({distances[{0, 0}] + heuristic({0, 0}, TARGET_NODE), {0, 0}});
-
-        while (!queue.empty())
+        if (current == TARGET_NODE)
         {
-            pair<int, int> current = queue.top().second;
-            queue.pop();
+            break;
+        }
 
-            if (current == TARGET_NODE)
+        for (auto neighbor : maze->getAdjacencyList(current))
+        {
+            int weight = neighbor.second;
+
+            if (costs[current] + weight < costs[neighbor.first])
             {
-                break;
-            }
+                costs[neighbor.first] = costs[current] + weight;
+                parent[neighbor.first] = current;
+                queue.push({costs[neighbor.first] + heuristic(neighbor.first, TARGET_NODE) * heuristicWeight, neighbor.first});
 
-            for (auto neighbor : maze->getAdjacencyList(current))
-            {
-                int weight = neighbor.second;
-
-                if (distances[current] + weight < distances[neighbor.first])
+                if (nodeColors != nullptr)
                 {
-                    distances[neighbor.first] = distances[current] + weight;
-                    parent[neighbor.first] = current;
-                    queue.push({distances[neighbor.first] + heuristic(neighbor.first, TARGET_NODE) * heuristicWeight, neighbor.first});
+                    nodeColors->push_back({neighbor.first, sf::Color(255, 165, 0)});
                 }
             }
         }
+    }
 
-        chrono::steady_clock::time_point endTime = chrono::steady_clock::now();
+    list<pair<int, int>> path;
 
-        aStarTime[heuristicWeight] = chrono::duration_cast<chrono::microseconds>(endTime - startTime).count();
-        aStarCost[heuristicWeight] = distances[TARGET_NODE];
+    pair<int, int> current = TARGET_NODE;
 
-        cout << "Done!\n";
+    while (current != make_pair(0, 0))
+    {
+        path.push_front(current);
+
+        if (nodeColors != nullptr)
+        {
+            nodeColors->push_back({current, sf::Color::Blue});
+        }
+
+        current = parent[current];
+    }
+
+    path.push_front(make_pair(0, 0));
+
+    if (nodeColors != nullptr)
+    {
+        nodeColors->push_back({make_pair(0, 0), sf::Color::Blue});
+    }
+
+    chrono::steady_clock::time_point endTime = chrono::steady_clock::now();
+
+    aStarTime[heuristicWeight] = chrono::duration_cast<chrono::microseconds>(endTime - startTime).count();
+    aStarCost[heuristicWeight] = costs[TARGET_NODE];
+
+    cout << "Done! (elapsed time: " << aStarTime[heuristicWeight] / 1000000.0 << "s)\n";
+}
+
+void MazeSolver::aStarAll(Maze *maze)
+{
+    for (auto heuristicWeight : heuristicWeights)
+    {
+        MazeSolver::aStar(maze, heuristicWeight);
     }
 }
 

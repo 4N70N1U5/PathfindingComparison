@@ -12,11 +12,12 @@ private:
     static unordered_map<int, int> aStarTime, aStarCost;
 
 public:
-    static void breadthFirstSearch(Maze *);
-    static void depthFirstSearch(Maze *);
-    static void dijkstra(Maze *);
-    static void bestFirstSearch(Maze *);
-    static void aStar(Maze *);
+    static void breadthFirstSearch(Maze *, vector<pair<pair<int, int>, sf::Color>> * = nullptr);
+    static void depthFirstSearch(Maze *, vector<pair<pair<int, int>, sf::Color>> * = nullptr);
+    static void dijkstra(Maze *, vector<pair<pair<int, int>, sf::Color>> * = nullptr);
+    static void bestFirstSearch(Maze *, vector<pair<pair<int, int>, sf::Color>> * = nullptr);
+    static void aStar(Maze *, int, vector<pair<pair<int, int>, sf::Color>> * = nullptr);
+    static void aStarAll(Maze *);
 
     static void printResults();
 };

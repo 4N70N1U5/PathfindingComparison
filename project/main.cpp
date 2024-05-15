@@ -1,11 +1,10 @@
 #include "include/Maze.hpp"
 #include "include/MazeGenerator.hpp"
 #include "include/MazeSolver.hpp"
+#include "include/SolveVisualizer.hpp"
 
 #include <iostream>
 #include <string>
-#include <thread>
-#include <chrono>
 #include <ctime>
 #include <SFML/Graphics.hpp>
 
@@ -16,6 +15,22 @@ bool validateInput(int argc, char *argv[])
     if (argc != 4 && argc != 5)
     {
         cout << "Incorrect argument list!\n";
+        return false;
+    }
+
+    try
+    {
+        stoi(argv[1]);
+        stoi(argv[2]);
+        stoi(argv[3]);
+        if (argc == 5)
+        {
+            stol(argv[4]);
+        }
+    }
+    catch (const exception &e)
+    {
+        cout << "Incorrect argument types!\n";
         return false;
     }
 
@@ -43,8 +58,6 @@ void generateMaze(Maze *maze, int argc, char *argv[])
         MazeGenerator generator(time(0));
         generator.generate(maze, stoi(argv[3]));
 
-        // this_thread::sleep_for(chrono::seconds(2));
-
         break;
     }
 
@@ -53,11 +66,11 @@ void generateMaze(Maze *maze, int argc, char *argv[])
         MazeGenerator generator(stol(argv[4]));
         generator.generate(maze, stoi(argv[3]));
 
-        // this_thread::sleep_for(chrono::seconds(2));
-
         break;
     }
     }
+
+    cout << "\n";
 }
 
 void clearConsole()
@@ -98,7 +111,10 @@ int main(int argc, char *argv[])
     MazeSolver::depthFirstSearch(maze);
     MazeSolver::dijkstra(maze);
     MazeSolver::bestFirstSearch(maze);
-    MazeSolver::aStar(maze);
+    MazeSolver::aStarAll(maze);
+
+    cout << "\nPress enter to continue...";
+    cin.get();
 
     bool exitProgram = false;
     string input;
@@ -125,11 +141,11 @@ int main(int argc, char *argv[])
         }
         else if (input == "2")
         {
-            if (stoi(argv[1]) <= 50 && stoi(argv[2]) <= 50)
+            if (stoi(argv[1]) <= 100 && stoi(argv[2]) <= 100)
             {
                 cout << "Close window to continue...\n";
 
-                window.create(sf::VideoMode(stoi(argv[1]) * 10, stoi(argv[2]) * 10), "Maze", sf::Style::Titlebar | sf::Style::Close);
+                window.create(sf::VideoMode((stoi(argv[2]) + 2) * 10, (stoi(argv[1]) + 2) * 10), "Maze", sf::Style::Titlebar | sf::Style::Close);
 
                 while (window.isOpen())
                 {
@@ -143,26 +159,145 @@ int main(int argc, char *argv[])
                         }
                     }
 
+                    window.clear(sf::Color::White);
+
                     maze->draw(&window);
+
+                    window.display();
                 }
             }
             else
             {
                 cout << "Maze is too large to be displayed!\n";
-                this_thread::sleep_for(chrono::seconds(2));
+
+                cout << "\nPress enter to continue...";
+                cin.get();
+            }
+        }
+        else if (input == "3")
+        {
+            if (stoi(argv[1]) <= 100 && stoi(argv[2]) <= 100)
+            {
+
+                window.create(sf::VideoMode((stoi(argv[2]) + 2) * 10, (stoi(argv[1]) + 2) * 10), "BFS Solve", sf::Style::Titlebar | sf::Style::Close);
+
+                SolveVisualizer::visualizeBFS(maze, &window);
+            }
+            else
+            {
+                cout << "Maze is too large to be displayed!\n";
+
+                cout << "\nPress enter to continue...";
+                cin.get();
+            }
+        }
+        else if (input == "4")
+        {
+            if (stoi(argv[1]) <= 100 && stoi(argv[2]) <= 100)
+            {
+
+                window.create(sf::VideoMode((stoi(argv[2]) + 2) * 10, (stoi(argv[1]) + 2) * 10), "DFS Solve", sf::Style::Titlebar | sf::Style::Close);
+
+                SolveVisualizer::visualizeDFS(maze, &window);
+            }
+            else
+            {
+                cout << "Maze is too large to be displayed!\n";
+
+                cout << "\nPress enter to continue...";
+                cin.get();
+            }
+        }
+        else if (input == "5")
+        {
+            if (stoi(argv[1]) <= 100 && stoi(argv[2]) <= 100)
+            {
+
+                window.create(sf::VideoMode((stoi(argv[2]) + 2) * 10, (stoi(argv[1]) + 2) * 10), "Dijkstra Solve", sf::Style::Titlebar | sf::Style::Close);
+
+                SolveVisualizer::visualizeDijkstra(maze, &window);
+            }
+            else
+            {
+                cout << "Maze is too large to be displayed!\n";
+
+                cout << "\nPress enter to continue...";
+                cin.get();
+            }
+        }
+        else if (input == "6")
+        {
+            if (stoi(argv[1]) <= 100 && stoi(argv[2]) <= 100)
+            {
+
+                window.create(sf::VideoMode((stoi(argv[2]) + 2) * 10, (stoi(argv[1]) + 2) * 10), "BeFS Solve", sf::Style::Titlebar | sf::Style::Close);
+
+                SolveVisualizer::visualizeBeFS(maze, &window);
+            }
+            else
+            {
+                cout << "Maze is too large to be displayed!\n";
+
+                cout << "\nPress enter to continue...";
+                cin.get();
+            }
+        }
+        else if (input == "7")
+        {
+            if (stoi(argv[1]) <= 100 && stoi(argv[2]) <= 100)
+            {
+                cout << "Enter heuristic weight: ";
+
+                string heuristicWeightInput;
+                cin >> heuristicWeightInput;
+                cin.get();
+
+                try
+                {
+                    stoi(heuristicWeightInput);
+                }
+                catch (const exception &e)
+                {
+                    cout << "Invalid heuristic weight! Try again.\n";
+
+                    cout << "\nPress enter to continue...";
+                    cin.get();
+
+                    continue;
+                }
+
+                if (stoi(heuristicWeightInput) < 0)
+                {
+                    cout << "Heuristic weight must be non-negative! Try again.\n";
+
+                    cout << "\nPress enter to continue...";
+                    cin.get();
+
+                    continue;
+                }
+
+                window.create(sf::VideoMode((stoi(argv[2]) + 2) * 10, (stoi(argv[1]) + 2) * 10), "A* Solve", sf::Style::Titlebar | sf::Style::Close);
+
+                SolveVisualizer::visualizeAStar(maze, stoi(heuristicWeightInput), &window);
+            }
+            else
+            {
+                cout << "Maze is too large to be displayed!\n";
+
+                cout << "\nPress enter to continue...";
+                cin.get();
             }
         }
         else if (input == "0")
         {
             exitProgram = true;
-
-            cout << "Program will exit...\n";
-            this_thread::sleep_for(chrono::seconds(2));
         }
         else
         {
             cout << "Invalid option! Try again.\n";
-            this_thread::sleep_for(chrono::seconds(2));
+
+            cout << "\nPress enter to continue...";
+            cin.get();
         }
     }
 

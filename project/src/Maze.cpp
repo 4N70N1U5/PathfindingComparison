@@ -57,6 +57,9 @@ bool Maze::areNeighbors(pair<int, int> node1, pair<int, int> node2)
 
 void Maze::drawWall(sf::RenderWindow *window, pair<int, int> wallLocation, int wallPosition)
 {
+    wallLocation.first++;
+    wallLocation.second++;
+
     if (wallPosition == NORTH || wallPosition == SOUTH)
     {
         sf::RectangleShape wall(sf::Vector2f(10, 1));
@@ -152,8 +155,6 @@ void Maze::print()
 
 void Maze::draw(sf::RenderWindow *window)
 {
-    window->clear(sf::Color::White);
-
     for (int i = 0; i < rows; i++)
     {
         for (int j = 0; j < columns; j++)
@@ -165,8 +166,36 @@ void Maze::draw(sf::RenderWindow *window)
                     drawWall(window, {i, j}, neighbor.second);
                 }
             }
+
+            if (i == 0)
+            {
+                drawWall(window, {i, j}, NORTH);
+                drawWall(window, {i - 1, j}, SOUTH);
+            }
+
+            if (j == 0)
+            {
+                if (i != 0)
+                {
+                    drawWall(window, {i, j}, WEST);
+                    drawWall(window, {i, j - 1}, EAST);
+                }
+            }
+
+            if (i == rows - 1)
+            {
+                drawWall(window, {i, j}, SOUTH);
+                drawWall(window, {i + 1, j}, NORTH);
+            }
+
+            if (j == columns - 1)
+            {
+                if (i != rows - 1)
+                {
+                    drawWall(window, {i, j}, EAST);
+                    drawWall(window, {i, j + 1}, WEST);
+                }
+            }
         }
     }
-
-    window->display();
 }
