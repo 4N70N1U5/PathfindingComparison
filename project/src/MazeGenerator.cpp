@@ -10,13 +10,9 @@
 #define SOUTH 2
 #define WEST 3
 
-MazeGenerator::MazeGenerator(long seed)
-{
-    this->seed = seed;
-    srand(seed);
-}
+unordered_set<pair<int, int>, boost::hash<pair<int, int>>> MazeGenerator::included;
 
-int MazeGenerator::getDirectionBetween(pair<int, int> node1, pair<int, int> node2)
+int getDirectionBetween(pair<int, int> node1, pair<int, int> node2)
 {
     if (node1.first == node2.first)
     {
@@ -42,20 +38,7 @@ int MazeGenerator::getDirectionBetween(pair<int, int> node1, pair<int, int> node
     }
 }
 
-pair<int, int> MazeGenerator::getRandomUnvisited(Maze *maze)
-{
-    pair<int, int> node;
-
-    do
-    {
-        node.first = rand() % maze->getRows();
-        node.second = rand() % maze->getColumns();
-    } while (included.find(node) != included.end());
-
-    return node;
-}
-
-pair<int, int> MazeGenerator::getNeighbor(pair<int, int> node, int direction)
+pair<int, int> getNeighbor(pair<int, int> node, int direction)
 {
     switch (direction)
     {
@@ -76,7 +59,7 @@ pair<int, int> MazeGenerator::getNeighbor(pair<int, int> node, int direction)
     }
 }
 
-vector<pair<int, int>> MazeGenerator::getAllNeighbors(Maze *maze, pair<int, int> node)
+vector<pair<int, int>> getAllNeighbors(Maze *maze, pair<int, int> node)
 {
     vector<pair<int, int>> neighbors;
 
@@ -101,6 +84,19 @@ vector<pair<int, int>> MazeGenerator::getAllNeighbors(Maze *maze, pair<int, int>
     }
 
     return neighbors;
+}
+
+pair<int, int> MazeGenerator::getRandomUnvisited(Maze *maze)
+{
+    pair<int, int> node;
+
+    do
+    {
+        node.first = rand() % maze->getRows();
+        node.second = rand() % maze->getColumns();
+    } while (included.find(node) != included.end());
+
+    return node;
 }
 
 void MazeGenerator::randomWalk(Maze *maze)
@@ -135,8 +131,12 @@ void MazeGenerator::randomWalk(Maze *maze)
     }
 }
 
-void MazeGenerator::generate(Maze *maze, bool multiplePaths)
+void MazeGenerator::generate(Maze *maze, bool multiplePaths, long seed)
 {
+    included.clear();
+
+    srand(seed);
+
     cout << "Will generate maze with " << maze->getRows() << " rows and " << maze->getColumns() << " columns with seed " << seed << ".\n";
     if (multiplePaths)
     {

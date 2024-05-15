@@ -5,7 +5,6 @@
 
 #include <iostream>
 #include <string>
-#include <ctime>
 #include <SFML/Graphics.hpp>
 
 using namespace std;
@@ -55,17 +54,13 @@ void generateMaze(Maze *maze, int argc, char *argv[])
     {
     case 4:
     {
-        MazeGenerator generator(time(0));
-        generator.generate(maze, stoi(argv[3]));
-
+        MazeGenerator::generate(maze, stoi(argv[3]));
         break;
     }
 
     case 5:
     {
-        MazeGenerator generator(stol(argv[4]));
-        generator.generate(maze, stoi(argv[3]));
-
+        MazeGenerator::generate(maze, stoi(argv[3]), stol(argv[4]));
         break;
     }
     }
