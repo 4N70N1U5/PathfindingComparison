@@ -75,7 +75,7 @@ void MazeSolver::breadthFirstSearch(Maze *maze, vector<pair<pair<int, int>, sf::
     }
 
     list<pair<int, int>> path;
-    int total_cost = 0;
+    long long total_cost = 0;
 
     pair<int, int> current = TARGET_NODE;
 
@@ -160,7 +160,7 @@ void MazeSolver::depthFirstSearch(Maze *maze, vector<pair<pair<int, int>, sf::Co
     }
 
     list<pair<int, int>> path;
-    int total_cost = 0;
+    long long total_cost = 0;
 
     pair<int, int> current = TARGET_NODE;
 
@@ -197,7 +197,7 @@ void MazeSolver::dijkstra(Maze *maze, vector<pair<pair<int, int>, sf::Color>> *n
     cout << "Solving maze using Dijkstra's algorithm... " << flush;
 
     priority_queue<pair<int, pair<int, int>>, vector<pair<int, pair<int, int>>>, greater<pair<int, pair<int, int>>>> queue;
-    unordered_map<pair<int, int>, int, boost::hash<pair<int, int>>> costs;
+    unordered_map<pair<int, int>, long long, boost::hash<pair<int, int>>> costs;
     unordered_map<pair<int, int>, pair<int, int>, boost::hash<pair<int, int>>> parent;
 
     for (int i = 0; i < maze->getRows(); i++)
@@ -330,7 +330,7 @@ void MazeSolver::bestFirstSearch(Maze *maze, vector<pair<pair<int, int>, sf::Col
     }
 
     list<pair<int, int>> path;
-    int total_cost = 0;
+    long long total_cost = 0;
 
     pair<int, int> current = TARGET_NODE;
 
@@ -367,7 +367,7 @@ void MazeSolver::aStar(Maze *maze, int heuristicWeight, vector<pair<pair<int, in
     cout << "Solving maze using A* algorithm with " << heuristicWeight << " heuristic weight... " << flush;
 
     priority_queue<pair<int, pair<int, int>>, vector<pair<int, pair<int, int>>>, greater<pair<int, pair<int, int>>>> queue;
-    unordered_map<pair<int, int>, int, boost::hash<pair<int, int>>> costs; // g(n)
+    unordered_map<pair<int, int>, long long, boost::hash<pair<int, int>>> costs; // g(n)
     unordered_map<pair<int, int>, pair<int, int>, boost::hash<pair<int, int>>> parent;
 
     for (int i = 0; i < maze->getRows(); i++)

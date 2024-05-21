@@ -49,8 +49,8 @@ pair<int, int> MazeGenerator::getRandomUnvisited(Maze *maze)
 void MazeGenerator::randomWalk(Maze *maze, int maxWeight)
 {
     pair<int, int> startNode = getRandomUnvisited(maze);
-    unordered_map<pair<int, int>, int, boost::hash<pair<int, int>>> directionTaken;
 
+    unordered_map<pair<int, int>, int, boost::hash<pair<int, int>>> directionTaken;
     pair<int, int> currentNode = startNode, neighbor;
 
     while (included.find(currentNode) == included.end())
@@ -63,8 +63,6 @@ void MazeGenerator::randomWalk(Maze *maze, int maxWeight)
 
         currentNode = neighbor;
     }
-
-    vector<pair<pair<int, int>, int>> path;
 
     currentNode = startNode;
 
@@ -82,8 +80,6 @@ void MazeGenerator::randomWalk(Maze *maze, int maxWeight)
 
 void MazeGenerator::generate(Maze *maze, bool weighted, bool multiplePaths, long seed)
 {
-    included.clear();
-
     srand(seed);
 
     cout << "Will generate maze with " << maze->getRows() << " rows and " << maze->getColumns() << " columns with seed " << seed << ".\n";
@@ -94,7 +90,9 @@ void MazeGenerator::generate(Maze *maze, bool weighted, bool multiplePaths, long
     {
         cout << "Maze will be a weighted graph.\n";
 
-        maxWeight = maze->getRows() * maze->getColumns() * 10;
+        maxWeight = maze->getRows() * maze->getColumns();
+
+        cout << "Maximum weight will be " << maxWeight << ".\n";
     }
     else
     {
@@ -116,13 +114,13 @@ void MazeGenerator::generate(Maze *maze, bool weighted, bool multiplePaths, long
 
     cout << "Generating maze... " << flush;
 
-    included.erase(included.begin(), included.end());
+    included.clear();
 
     included.insert({0, 0});
 
     while (included.size() < maze->getRows() * maze->getColumns())
     {
-        randomWalk(maze, weighted);
+        randomWalk(maze, maxWeight);
     }
 
     if (multiplePaths)
@@ -153,6 +151,6 @@ void MazeGenerator::generate(Maze *maze, bool weighted, bool multiplePaths, long
     cout << "Maze successfully generated in "
          << std::chrono::duration_cast<std::chrono::microseconds>(endTime - startTime).count()
          << " microseconds ("
-         << std::chrono::duration_cast<std::chrono::microseconds>(endTime - startTime).count() / 1000000.0
+         << std::chrono::duration_cast<std::chrono::seconds>(endTime - startTime).count()
          << " seconds)!\n";
 }
