@@ -159,6 +159,14 @@ int main(int argc, char *argv[])
                         {
                             window.close();
                         }
+
+                        if (event.type == sf::Event::KeyPressed)
+                        {
+                            if (event.key.code == sf::Keyboard::Escape)
+                            {
+                                window.close();
+                            }
+                        }
                     }
 
                     window.clear(sf::Color::White);

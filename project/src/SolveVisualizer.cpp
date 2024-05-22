@@ -39,11 +39,30 @@ void drawVisualization(Maze *maze, vector<pair<pair<int, int>, sf::Color>> *node
             {
                 window->close();
             }
+
+            if (event.type == sf::Event::KeyPressed)
+            {
+                if (event.key.code == sf::Keyboard::Escape)
+                {
+                    window->close();
+                }
+            }
         }
 
         if (steps < nodeColors->size() && clock.getElapsedTime().asMilliseconds() >= DELAY)
         {
             steps++;
+
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::LControl))
+            {
+                steps += 5;
+            }
+
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
+            {
+                steps = nodeColors->size();
+            }
+
             clock.restart();
         }
 
