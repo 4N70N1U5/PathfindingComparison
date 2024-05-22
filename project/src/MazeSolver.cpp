@@ -15,7 +15,8 @@
 int MazeSolver::heuristicWeights[] = {1, 5, 10, 25, 50, 75, 100, 250, 500, 750, 1000, 2500, 5000, 7500, 10000};
 long long MazeSolver::bfsTime, MazeSolver::dfsTime, MazeSolver::dijkstraTime, MazeSolver::befsTime;
 long long MazeSolver::bfsCost, MazeSolver::dfsCost, MazeSolver::dijkstraCost, MazeSolver::befsCost;
-unordered_map<int, int> MazeSolver::aStarTime, MazeSolver::aStarCost;
+long long MazeSolver::bfsLength, MazeSolver::dfsLength, MazeSolver::dijkstraLength, MazeSolver::befsLength;
+unordered_map<int, int> MazeSolver::aStarTime, MazeSolver::aStarCost, MazeSolver::aStarLength;
 
 int heuristic(pair<int, int> a, pair<int, int> b)
 {
@@ -75,14 +76,15 @@ void MazeSolver::breadthFirstSearch(Maze *maze, vector<pair<pair<int, int>, sf::
     }
 
     list<pair<int, int>> path;
-    long long total_cost = 0;
+    long long totalCost = 0, pathLength = 0;
 
     pair<int, int> current = TARGET_NODE;
 
     while (current != make_pair(0, 0))
     {
         path.push_front(current);
-        total_cost += maze->getEdgeWeight(parent[current], current);
+        totalCost += maze->getEdgeWeight(parent[current], current);
+        pathLength++;
 
         if (nodeColors != nullptr)
         {
@@ -102,7 +104,8 @@ void MazeSolver::breadthFirstSearch(Maze *maze, vector<pair<pair<int, int>, sf::
     chrono::steady_clock::time_point endTime = chrono::steady_clock::now();
 
     bfsTime = chrono::duration_cast<chrono::microseconds>(endTime - startTime).count();
-    bfsCost = total_cost;
+    bfsCost = totalCost;
+    bfsLength = pathLength;
 
     cout << "Done! (elapsed time: " << bfsTime / 1000000.0 << "s)\n";
 }
@@ -160,14 +163,15 @@ void MazeSolver::depthFirstSearch(Maze *maze, vector<pair<pair<int, int>, sf::Co
     }
 
     list<pair<int, int>> path;
-    long long total_cost = 0;
+    long long totalCost = 0, pathLength = 0;
 
     pair<int, int> current = TARGET_NODE;
 
     while (current != make_pair(0, 0))
     {
         path.push_front(current);
-        total_cost += maze->getEdgeWeight(parent[current], current);
+        totalCost += maze->getEdgeWeight(parent[current], current);
+        pathLength++;
 
         if (nodeColors != nullptr)
         {
@@ -187,7 +191,8 @@ void MazeSolver::depthFirstSearch(Maze *maze, vector<pair<pair<int, int>, sf::Co
     chrono::steady_clock::time_point endTime = chrono::steady_clock::now();
 
     dfsTime = chrono::duration_cast<chrono::microseconds>(endTime - startTime).count();
-    dfsCost = total_cost;
+    dfsCost = totalCost;
+    dfsLength = pathLength;
 
     cout << "Done! (elapsed time: " << dfsTime / 1000000.0 << "s)\n";
 }
@@ -247,12 +252,14 @@ void MazeSolver::dijkstra(Maze *maze, vector<pair<pair<int, int>, sf::Color>> *n
     }
 
     list<pair<int, int>> path;
+    long long pathLength = 0;
 
     pair<int, int> current = TARGET_NODE;
 
     while (current != make_pair(0, 0))
     {
         path.push_front(current);
+        pathLength++;
 
         if (nodeColors != nullptr)
         {
@@ -273,6 +280,7 @@ void MazeSolver::dijkstra(Maze *maze, vector<pair<pair<int, int>, sf::Color>> *n
 
     dijkstraTime = chrono::duration_cast<chrono::microseconds>(endTime - startTime).count();
     dijkstraCost = costs[TARGET_NODE];
+    dijkstraLength = pathLength;
 
     cout << "Done! (elapsed time: " << dijkstraTime / 1000000.0 << "s)\n";
 }
@@ -330,14 +338,15 @@ void MazeSolver::bestFirstSearch(Maze *maze, vector<pair<pair<int, int>, sf::Col
     }
 
     list<pair<int, int>> path;
-    long long total_cost = 0;
+    long long totalCost = 0, pathLength = 0;
 
     pair<int, int> current = TARGET_NODE;
 
     while (current != make_pair(0, 0))
     {
         path.push_front(current);
-        total_cost += maze->getEdgeWeight(parent[current], current);
+        totalCost += maze->getEdgeWeight(parent[current], current);
+        pathLength++;
 
         if (nodeColors != nullptr)
         {
@@ -357,7 +366,8 @@ void MazeSolver::bestFirstSearch(Maze *maze, vector<pair<pair<int, int>, sf::Col
     chrono::steady_clock::time_point endTime = chrono::steady_clock::now();
 
     befsTime = chrono::duration_cast<chrono::microseconds>(endTime - startTime).count();
-    befsCost = total_cost;
+    befsCost = totalCost;
+    befsLength = pathLength;
 
     cout << "Done! (elapsed time: " << befsTime / 1000000.0 << "s)\n";
 }
@@ -417,12 +427,14 @@ void MazeSolver::aStar(Maze *maze, int heuristicWeight, vector<pair<pair<int, in
     }
 
     list<pair<int, int>> path;
+    long long pathLength = 0;
 
     pair<int, int> current = TARGET_NODE;
 
     while (current != make_pair(0, 0))
     {
         path.push_front(current);
+        pathLength++;
 
         if (nodeColors != nullptr)
         {
@@ -443,6 +455,7 @@ void MazeSolver::aStar(Maze *maze, int heuristicWeight, vector<pair<pair<int, in
 
     aStarTime[heuristicWeight] = chrono::duration_cast<chrono::microseconds>(endTime - startTime).count();
     aStarCost[heuristicWeight] = costs[TARGET_NODE];
+    aStarLength[heuristicWeight] = pathLength;
 
     cout << "Done! (elapsed time: " << aStarTime[heuristicWeight] / 1000000.0 << "s)\n";
 }
@@ -465,6 +478,8 @@ void MazeSolver::printResults()
 
     cout << "Breadth-First Search solve cost: " << bfsCost << "\n";
 
+    cout << "Breadth-First Search solve path length: " << bfsLength << "\n";
+
     cout << "\n";
 
     cout << "Depth-First Search solve duration: "
@@ -474,6 +489,8 @@ void MazeSolver::printResults()
          << " seconds).\n";
 
     cout << "Depth-First Search solve cost: " << dfsCost << "\n";
+
+    cout << "Depth-First Search solve path length: " << dfsLength << "\n";
 
     cout << "\n";
 
@@ -485,6 +502,8 @@ void MazeSolver::printResults()
 
     cout << "Dijkstra's solve cost: " << dijkstraCost << "\n";
 
+    cout << "Dijkstra's solve path length: " << dijkstraLength << "\n";
+
     cout << "\n";
 
     cout << "Best-First Search solve duration: "
@@ -494,6 +513,8 @@ void MazeSolver::printResults()
          << " seconds).\n";
 
     cout << "Best-First Search solve cost: " << befsCost << "\n";
+
+    cout << "Best-First Search solve path length: " << befsLength << "\n";
 
     for (auto heuristicWeight : heuristicWeights)
     {
@@ -506,5 +527,7 @@ void MazeSolver::printResults()
              << " seconds).\n";
 
         cout << "A* with " << heuristicWeight << " heuristic weight solve cost: " << aStarCost[heuristicWeight] << "\n";
+
+        cout << "A* with " << heuristicWeight << " heuristic weight solve path length: " << aStarLength[heuristicWeight] << "\n";
     }
 }

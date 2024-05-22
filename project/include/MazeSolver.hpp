@@ -9,7 +9,8 @@ private:
     static int heuristicWeights[];
     static long long bfsTime, dfsTime, dijkstraTime, befsTime;
     static long long bfsCost, dfsCost, dijkstraCost, befsCost;
-    static unordered_map<int, int> aStarTime, aStarCost;
+    static long long bfsLength, dfsLength, dijkstraLength, befsLength;
+    static unordered_map<int, int> aStarTime, aStarCost, aStarLength;
 
 public:
     static void breadthFirstSearch(Maze *, vector<pair<pair<int, int>, sf::Color>> * = nullptr);
