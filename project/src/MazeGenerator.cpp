@@ -151,6 +151,6 @@ void MazeGenerator::generate(Maze *maze, bool weighted, bool multiplePaths, long
     cout << "Maze successfully generated in "
          << std::chrono::duration_cast<std::chrono::microseconds>(endTime - startTime).count()
          << " microseconds ("
-         << std::chrono::duration_cast<std::chrono::seconds>(endTime - startTime).count()
+         << std::chrono::duration_cast<std::chrono::microseconds>(endTime - startTime).count() / 1000000.0
          << " seconds)!\n";
 }

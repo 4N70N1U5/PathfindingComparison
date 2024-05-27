@@ -86,13 +86,13 @@ void clearConsole()
 
 void printMenuOptions()
 {
-    cout << "1: Print solve results\n";
-    cout << "2: Draw maze in new window\n";
-    cout << "3: Visualize BFS solve in new window\n";
-    cout << "4: Visualize DFS solve in new window\n";
-    cout << "5: Visualize Dijkstra solve in new window\n";
-    cout << "6: Visualize BeFS solve in new window\n";
-    cout << "7: Visualize A* solve in new window\n";
+    cout << "1: Print results\n";
+    cout << "2: Visualize maze in new window\n";
+    cout << "3: Visualize BFS solution in new window\n";
+    cout << "4: Visualize DFS solution in new window\n";
+    cout << "5: Visualize Dijkstra solution in new window\n";
+    cout << "6: Visualize BeFS solution in new window\n";
+    cout << "7: Visualize A* solution in new window\n";
     cout << "0: Exit\n";
 
     cout << "\nChoose an option: ";
@@ -121,9 +121,6 @@ int main(int argc, char *argv[])
     bool exitProgram = false;
     string input;
 
-    sf::RenderWindow window;
-    window.setKeyRepeatEnabled(false);
-
     while (!exitProgram)
     {
         clearConsole();
@@ -143,11 +140,13 @@ int main(int argc, char *argv[])
         }
         else if (input == "2")
         {
-            if (stoi(argv[1]) <= 100 && stoi(argv[2]) <= 100)
+            if (stoi(argv[1]) <= 50 && stoi(argv[2]) <= 50)
             {
                 cout << "Close window to continue...\n";
 
-                window.create(sf::VideoMode((stoi(argv[2]) + 2) * 10, (stoi(argv[1]) + 2) * 10), "Maze", sf::Style::Titlebar | sf::Style::Close);
+                sf::RenderWindow window(sf::VideoMode(480 * (stod(argv[2]) / stod(argv[1])), 480), "Maze", sf::Style::Titlebar | sf::Style::Resize | sf::Style::Close);
+                window.setActive(true);
+                window.setKeyRepeatEnabled(false);
 
                 while (window.isOpen())
                 {
@@ -158,6 +157,12 @@ int main(int argc, char *argv[])
                         if (event.type == sf::Event::Closed)
                         {
                             window.close();
+                        }
+
+                        if (event.type == sf::Event::Resized)
+                        {
+                            sf::FloatRect visibleArea(0, 0, event.size.width, event.size.height);
+                            window.setView(sf::View(visibleArea));
                         }
 
                         if (event.type == sf::Event::KeyPressed)
@@ -186,12 +191,13 @@ int main(int argc, char *argv[])
         }
         else if (input == "3")
         {
-            if (stoi(argv[1]) <= 100 && stoi(argv[2]) <= 100)
+            if (stoi(argv[1]) <= 50 && stoi(argv[2]) <= 50)
             {
+                sf::RenderWindow window(sf::VideoMode(480 * (stod(argv[2]) / stod(argv[1])), 480), "BFS Solution", sf::Style::Titlebar | sf::Style::Resize | sf::Style::Close);
+                window.setActive(true);
+                window.setKeyRepeatEnabled(false);
 
-                window.create(sf::VideoMode((stoi(argv[2]) + 2) * 10, (stoi(argv[1]) + 2) * 10), "BFS Solve", sf::Style::Titlebar | sf::Style::Close);
-
-                SolveVisualizer::visualizeBFS(maze, &window);
+                SolveVisualizer::visualizeBFS(&window, maze);
             }
             else
             {
@@ -203,12 +209,13 @@ int main(int argc, char *argv[])
         }
         else if (input == "4")
         {
-            if (stoi(argv[1]) <= 100 && stoi(argv[2]) <= 100)
+            if (stoi(argv[1]) <= 50 && stoi(argv[2]) <= 50)
             {
+                sf::RenderWindow window(sf::VideoMode(480 * (stod(argv[2]) / stod(argv[1])), 480), "DFS Solution", sf::Style::Titlebar | sf::Style::Resize | sf::Style::Close);
+                window.setActive(true);
+                window.setKeyRepeatEnabled(false);
 
-                window.create(sf::VideoMode((stoi(argv[2]) + 2) * 10, (stoi(argv[1]) + 2) * 10), "DFS Solve", sf::Style::Titlebar | sf::Style::Close);
-
-                SolveVisualizer::visualizeDFS(maze, &window);
+                SolveVisualizer::visualizeDFS(&window, maze);
             }
             else
             {
@@ -220,12 +227,13 @@ int main(int argc, char *argv[])
         }
         else if (input == "5")
         {
-            if (stoi(argv[1]) <= 100 && stoi(argv[2]) <= 100)
+            if (stoi(argv[1]) <= 50 && stoi(argv[2]) <= 50)
             {
+                sf::RenderWindow window(sf::VideoMode(480 * (stod(argv[2]) / stod(argv[1])), 480), "Dijkstra Solution", sf::Style::Titlebar | sf::Style::Resize | sf::Style::Close);
+                window.setActive(true);
+                window.setKeyRepeatEnabled(false);
 
-                window.create(sf::VideoMode((stoi(argv[2]) + 2) * 10, (stoi(argv[1]) + 2) * 10), "Dijkstra Solve", sf::Style::Titlebar | sf::Style::Close);
-
-                SolveVisualizer::visualizeDijkstra(maze, &window);
+                SolveVisualizer::visualizeDijkstra(&window, maze);
             }
             else
             {
@@ -237,12 +245,13 @@ int main(int argc, char *argv[])
         }
         else if (input == "6")
         {
-            if (stoi(argv[1]) <= 100 && stoi(argv[2]) <= 100)
+            if (stoi(argv[1]) <= 50 && stoi(argv[2]) <= 50)
             {
+                sf::RenderWindow window(sf::VideoMode(480 * (stod(argv[2]) / stod(argv[1])), 480), "BeFS Solution", sf::Style::Titlebar | sf::Style::Resize | sf::Style::Close);
+                window.setActive(true);
+                window.setKeyRepeatEnabled(false);
 
-                window.create(sf::VideoMode((stoi(argv[2]) + 2) * 10, (stoi(argv[1]) + 2) * 10), "BeFS Solve", sf::Style::Titlebar | sf::Style::Close);
-
-                SolveVisualizer::visualizeBeFS(maze, &window);
+                SolveVisualizer::visualizeBeFS(&window, maze);
             }
             else
             {
@@ -254,7 +263,7 @@ int main(int argc, char *argv[])
         }
         else if (input == "7")
         {
-            if (stoi(argv[1]) <= 100 && stoi(argv[2]) <= 100)
+            if (stoi(argv[1]) <= 50 && stoi(argv[2]) <= 50)
             {
                 cout << "Enter heuristic weight: ";
 
@@ -286,9 +295,11 @@ int main(int argc, char *argv[])
                     continue;
                 }
 
-                window.create(sf::VideoMode((stoi(argv[2]) + 2) * 10, (stoi(argv[1]) + 2) * 10), "A* Solve", sf::Style::Titlebar | sf::Style::Close);
+                sf::RenderWindow window(sf::VideoMode(480 * (stod(argv[2]) / stod(argv[1])), 480), "A* Solution", sf::Style::Titlebar | sf::Style::Resize | sf::Style::Close);
+                window.setActive(true);
+                window.setKeyRepeatEnabled(false);
 
-                SolveVisualizer::visualizeAStar(maze, stoi(heuristicWeightInput), &window);
+                SolveVisualizer::visualizeAStar(&window, maze, stoi(heuristicWeightInput));
             }
             else
             {

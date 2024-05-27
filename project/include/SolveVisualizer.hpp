@@ -6,11 +6,11 @@
 class SolveVisualizer
 {
 public:
-    static void visualizeBFS(Maze *, sf::RenderWindow *);
-    static void visualizeDFS(Maze *, sf::RenderWindow *);
-    static void visualizeDijkstra(Maze *, sf::RenderWindow *);
-    static void visualizeBeFS(Maze *, sf::RenderWindow *);
-    static void visualizeAStar(Maze *, int, sf::RenderWindow *);
+    static void visualizeBFS(sf::RenderWindow *, Maze *);
+    static void visualizeDFS(sf::RenderWindow *, Maze *);
+    static void visualizeDijkstra(sf::RenderWindow *, Maze *);
+    static void visualizeBeFS(sf::RenderWindow *, Maze *);
+    static void visualizeAStar(sf::RenderWindow *, Maze *, int);
 };
 
 #endif

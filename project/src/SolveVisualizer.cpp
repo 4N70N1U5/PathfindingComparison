@@ -10,19 +10,27 @@
 #define TARGET_NODE make_pair(maze->getRows() - 1, maze->getColumns() - 1)
 #define DELAY 25
 
-void drawCircle(sf::RenderWindow *window, pair<int, int> location, sf::Color color)
+void drawRect(sf::RenderWindow *window, Maze *maze, pair<int, int> location, sf::Color color)
 {
     location.first++;
     location.second++;
 
-    sf::CircleShape circle(3);
-    circle.setFillColor(color);
-    circle.setPosition(location.second * 10 + 2, location.first * 10 + 2);
+    pair<int, int> cellSize = {window->getSize().x / (maze->getColumns() + 2), window->getSize().y / (maze->getRows() + 2)}; // {horizontal, vertical}
 
-    window->draw(circle);
+    sf::RectangleShape outline(sf::Vector2f(cellSize.first - 4 * (cellSize.first * 0.1), cellSize.second - 4 * (cellSize.second * 0.1))),
+        rect(sf::Vector2f(cellSize.first - 6 * (cellSize.first * 0.1), cellSize.second - 6 * (cellSize.second * 0.1)));
+
+    outline.setFillColor(sf::Color::Black);
+    outline.setPosition(location.second * cellSize.first + 2 * (cellSize.first * 0.1), location.first * cellSize.second + 2 * (cellSize.second * 0.1));
+
+    rect.setFillColor(color);
+    rect.setPosition(location.second * cellSize.first + 3 * (cellSize.first * 0.1), location.first * cellSize.second + 3 * (cellSize.second * 0.1));
+
+    window->draw(outline);
+    window->draw(rect);
 }
 
-void drawVisualization(Maze *maze, vector<pair<pair<int, int>, sf::Color>> *nodeColors, sf::RenderWindow *window)
+void drawVisualization(sf::RenderWindow *window, Maze *maze, vector<pair<pair<int, int>, sf::Color>> *nodeColors)
 {
     cout << "Close window to continue...\n";
 
@@ -40,6 +48,12 @@ void drawVisualization(Maze *maze, vector<pair<pair<int, int>, sf::Color>> *node
                 window->close();
             }
 
+            if (event.type == sf::Event::Resized)
+            {
+                sf::FloatRect visibleArea(0, 0, event.size.width, event.size.height);
+                window->setView(sf::View(visibleArea));
+            }
+
             if (event.type == sf::Event::KeyPressed)
             {
                 if (event.key.code == sf::Keyboard::Escape)
@@ -55,7 +69,7 @@ void drawVisualization(Maze *maze, vector<pair<pair<int, int>, sf::Color>> *node
 
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::LControl))
             {
-                steps += 5;
+                steps = min(steps + 5, (int)nodeColors->size());
             }
 
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
@@ -72,54 +86,54 @@ void drawVisualization(Maze *maze, vector<pair<pair<int, int>, sf::Color>> *node
 
         for (int i = 0; i < steps; i++)
         {
-            drawCircle(window, nodeColors->at(i).first, nodeColors->at(i).second);
+            drawRect(window, maze, nodeColors->at(i).first, nodeColors->at(i).second);
         }
 
         window->display();
     }
 }
 
-void SolveVisualizer::visualizeBFS(Maze *maze, sf::RenderWindow *window)
+void SolveVisualizer::visualizeBFS(sf::RenderWindow *window, Maze *maze)
 {
     vector<pair<pair<int, int>, sf::Color>> nodeColors;
 
     MazeSolver::breadthFirstSearch(maze, &nodeColors);
 
-    drawVisualization(maze, &nodeColors, window);
+    drawVisualization(window, maze, &nodeColors);
 }
 
-void SolveVisualizer::visualizeDFS(Maze *maze, sf::RenderWindow *window)
+void SolveVisualizer::visualizeDFS(sf::RenderWindow *window, Maze *maze)
 {
     vector<pair<pair<int, int>, sf::Color>> nodeColors;
 
     MazeSolver::depthFirstSearch(maze, &nodeColors);
 
-    drawVisualization(maze, &nodeColors, window);
+    drawVisualization(window, maze, &nodeColors);
 }
 
-void SolveVisualizer::visualizeDijkstra(Maze *maze, sf::RenderWindow *window)
+void SolveVisualizer::visualizeDijkstra(sf::RenderWindow *window, Maze *maze)
 {
     vector<pair<pair<int, int>, sf::Color>> nodeColors;
 
     MazeSolver::dijkstra(maze, &nodeColors);
 
-    drawVisualization(maze, &nodeColors, window);
+    drawVisualization(window, maze, &nodeColors);
 }
 
-void SolveVisualizer::visualizeBeFS(Maze *maze, sf::RenderWindow *window)
+void SolveVisualizer::visualizeBeFS(sf::RenderWindow *window, Maze *maze)
 {
     vector<pair<pair<int, int>, sf::Color>> nodeColors;
 
     MazeSolver::bestFirstSearch(maze, &nodeColors);
 
-    drawVisualization(maze, &nodeColors, window);
+    drawVisualization(window, maze, &nodeColors);
 }
 
-void SolveVisualizer::visualizeAStar(Maze *maze, int heuristicWeight, sf::RenderWindow *window)
+void SolveVisualizer::visualizeAStar(sf::RenderWindow *window, Maze *maze, int heuristicWeight)
 {
     vector<pair<pair<int, int>, sf::Color>> nodeColors;
 
     MazeSolver::aStar(maze, heuristicWeight, &nodeColors);
 
-    drawVisualization(maze, &nodeColors, window);
+    drawVisualization(window, maze, &nodeColors);
 }

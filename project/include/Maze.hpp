@@ -28,6 +28,8 @@ public:
     bool addEdge(pair<int, int>, pair<int, int>, int);
 
     void print();
+    void drawWall(sf::RenderWindow *window, pair<int, int> wallLocation, int wallPosition);
+    void drawPath(sf::RenderWindow *window, pair<int, int> nodeLocation, int direction, int weight, int maxWeight);
     void draw(sf::RenderWindow *);
 };
 
