@@ -114,12 +114,13 @@ void Maze::print()
     }
 }
 
-void Maze::drawWall(sf::RenderWindow *window, pair<int, int> wallLocation, int wallPosition)
+void Maze::drawWall(sf::RenderTarget *target, pair<int, int> wallLocation, int wallPosition)
 {
     wallLocation.first++;
     wallLocation.second++;
 
-    pair<int, int> cellSize = {window->getSize().x / (columns + 2), window->getSize().y / (rows + 2)}; // {horizontal, vertical}
+    pair<int, int> cellSize = {target->getSize().x / (columns + 2), target->getSize().y / (rows + 2)}; // {horizontal, vertical}
+    // pair<int, int> cellSize = {target->getSize().x / (columns), target->getSize().y / (rows)}; // {horizontal, vertical}
 
     sf::RectangleShape wall;
     wall.setFillColor(sf::Color::Black);
@@ -151,22 +152,23 @@ void Maze::drawWall(sf::RenderWindow *window, pair<int, int> wallLocation, int w
         }
     }
 
-    window->draw(wall);
+    target->draw(wall);
 }
 
-void Maze::drawPath(sf::RenderWindow *window, pair<int, int> nodeLocation, int direction, int weight, int maxWeight)
+void Maze::drawPath(sf::RenderTarget *target, pair<int, int> nodeLocation, int direction, int weight, int maxWeight)
 {
     nodeLocation.first++;
     nodeLocation.second++;
 
-    pair<int, int> cellSize = {window->getSize().x / (columns + 2), window->getSize().y / (rows + 2)}; // {horizontal, vertical}
+    pair<int, int> cellSize = {target->getSize().x / (columns + 2), target->getSize().y / (rows + 2)}; // {horizontal, vertical}
+    // pair<int, int> cellSize = {target->getSize().x / (columns), target->getSize().y / (rows)}; // {horizontal, vertical}
 
     sf::RectangleShape path;
 
-    double colorOffset = 255.0 - (((double)weight / (double)maxWeight) * 255.0);
+    double colorOffset = 330.0 - (((double)weight / (double)maxWeight) * 330.0);
     int redValue = min((int)colorOffset + 150, 255);
     int greenValue = max(0, (int)colorOffset - 105);
-    path.setFillColor(sf::Color(redValue, greenValue, 0, 255));
+    path.setFillColor(sf::Color(redValue, greenValue, 0, 128));
 
     if (direction == NORTH || direction == SOUTH)
     {
@@ -195,10 +197,10 @@ void Maze::drawPath(sf::RenderWindow *window, pair<int, int> nodeLocation, int d
         }
     }
 
-    window->draw(path);
+    target->draw(path);
 }
 
-void Maze::draw(sf::RenderWindow *window)
+void Maze::draw(sf::RenderTarget *target, bool showWeights)
 {
     for (int i = 0; i < rows; i++)
     {
@@ -208,51 +210,51 @@ void Maze::draw(sf::RenderWindow *window)
             {
                 if (!areConnected({i, j}, neighbor.first))
                 {
-                    drawWall(window, {i, j}, neighbor.second);
+                    drawWall(target, {i, j}, neighbor.second);
                 }
-                else
+                else if (showWeights)
                 {
-                    drawPath(window, {i, j}, neighbor.second, getEdgeWeight({i, j}, neighbor.first), rows * columns);
+                    drawPath(target, {i, j}, neighbor.second, getEdgeWeight({i, j}, neighbor.first), rows + columns);
                 }
             }
 
             if (i == 0)
             {
-                drawWall(window, {i, j}, NORTH);
-                drawWall(window, {i - 1, j}, SOUTH);
+                drawWall(target, {i, j}, NORTH);
+                drawWall(target, {i - 1, j}, SOUTH);
             }
 
             if (j == 0)
             {
                 if (i != 0)
                 {
-                    drawWall(window, {i, j}, WEST);
-                    drawWall(window, {i, j - 1}, EAST);
+                    drawWall(target, {i, j}, WEST);
+                    drawWall(target, {i, j - 1}, EAST);
                 }
-                else
+                else if (showWeights)
                 {
-                    drawPath(window, {i, j}, WEST, 0, rows * columns);
-                    drawPath(window, {i, j - 1}, EAST, 0, rows * columns);
+                    drawPath(target, {i, j}, WEST, 0, rows + columns);
+                    drawPath(target, {i, j - 1}, EAST, 0, rows + columns);
                 }
             }
 
             if (i == rows - 1)
             {
-                drawWall(window, {i, j}, SOUTH);
-                drawWall(window, {i + 1, j}, NORTH);
+                drawWall(target, {i, j}, SOUTH);
+                drawWall(target, {i + 1, j}, NORTH);
             }
 
             if (j == columns - 1)
             {
                 if (i != rows - 1)
                 {
-                    drawWall(window, {i, j}, EAST);
-                    drawWall(window, {i, j + 1}, WEST);
+                    drawWall(target, {i, j}, EAST);
+                    drawWall(target, {i, j + 1}, WEST);
                 }
-                else
+                else if (showWeights)
                 {
-                    drawPath(window, {i, j}, EAST, 0, rows * columns);
-                    drawPath(window, {i, j + 1}, WEST, 0, rows * columns);
+                    drawPath(target, {i, j}, EAST, 0, rows + columns);
+                    drawPath(target, {i, j + 1}, WEST, 0, rows + columns);
                 }
             }
         }

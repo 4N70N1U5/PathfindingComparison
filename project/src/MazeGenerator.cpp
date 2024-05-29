@@ -90,7 +90,8 @@ void MazeGenerator::generate(Maze *maze, bool weighted, bool multiplePaths, long
     {
         cout << "Maze will be a weighted graph.\n";
 
-        maxWeight = maze->getRows() * maze->getColumns();
+        // maxWeight = maze->getRows() * maze->getColumns() / 10;
+        maxWeight = maze->getRows() + maze->getColumns();
 
         cout << "Maximum weight will be " << maxWeight << ".\n";
     }

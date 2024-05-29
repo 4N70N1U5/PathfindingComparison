@@ -5,12 +5,12 @@
 
 class MazeSolver
 {
-private:
-    static int heuristicWeights[];
-    static long long bfsTime, dfsTime, dijkstraTime, befsTime;
-    static long long bfsCost, dfsCost, dijkstraCost, befsCost;
-    static long long bfsLength, dfsLength, dijkstraLength, befsLength;
-    static unordered_map<int, int> aStarTime, aStarCost, aStarLength;
+    // private:
+    // static int heuristicWeights[];
+    // static long long bfsTime, dfsTime, dijkstraTime, befsTime;
+    // static long long bfsCost, dfsCost, dijkstraCost, befsCost;
+    // static long long bfsLength, dfsLength, dijkstraLength, befsLength;
+    // static unordered_map<int, int> aStarTime, aStarCost, aStarLength;
 
 public:
     static void breadthFirstSearch(Maze *, vector<pair<pair<int, int>, sf::Color>> * = nullptr);
@@ -18,9 +18,9 @@ public:
     static void dijkstra(Maze *, vector<pair<pair<int, int>, sf::Color>> * = nullptr);
     static void bestFirstSearch(Maze *, vector<pair<pair<int, int>, sf::Color>> * = nullptr);
     static void aStar(Maze *, int, vector<pair<pair<int, int>, sf::Color>> * = nullptr);
-    static void aStarAll(Maze *);
+    static void aStarAll(Maze *, vector<pair<pair<int, int>, sf::Color>> * = nullptr);
 
-    static void printResults();
+    // static void printResults();
 };
 
 #endif

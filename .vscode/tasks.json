@@ -13,9 +13,10 @@
 				"${workspaceFolder}/project/src/MazeGenerator.cpp",
 				"${workspaceFolder}/project/src/MazeSolver.cpp",
 				"${workspaceFolder}/project/src/SolveVisualizer.cpp",
+				"${workspaceFolder}/project/src/Button.cpp",
 				"-std=c++17",
 				"-o",
-				"${workspaceFolder}/bin/PathfindingComparison.out",
+				"${workspaceFolder}/bin/PathfindingComparison",
 				"-lsfml-graphics",
 				"-lsfml-window",
 				"-lsfml-system"
